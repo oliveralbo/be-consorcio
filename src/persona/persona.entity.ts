@@ -1,0 +1,31 @@
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, DeleteDateColumn } from 'typeorm';
+
+@Entity()
+export class Persona {
+  @PrimaryGeneratedColumn('uuid')
+  id_persona: string;
+
+  @Column()
+  nombre: string;
+
+  @Column()
+  apellido: string;
+
+  @Column({ unique: true })
+  email: string;
+
+  @Column({ nullable: true })
+  telefono: string;
+
+  @Column({ unique: true })
+  dni: string;
+
+  @CreateDateColumn()
+  created_at: Date;
+
+  @UpdateDateColumn()
+  updated_at: Date;
+
+  @DeleteDateColumn()
+  deleted_at: Date;
+}
