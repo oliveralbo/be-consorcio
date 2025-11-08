@@ -2,24 +2,20 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { PersonaModule } from './persona/persona.module';
-import { UsuarioAppModule } from './usuario/usuario.module';
-import { UnidadFuncionalModule } from './unidad-funcional/unidad-funcional.module';
-import { ExpensaModule } from './expensa/expensa.module';
-import { GastoModule } from './gasto/gasto.module';
+import { PersonaModule } from './modules/persona/persona.module';
+import { UsuarioAppModule } from './modules/usuario/usuario.module';
+import { UnidadFuncionalModule } from './modules/unidad-funcional/unidad-funcional.module';
+import { ExpensaModule } from './modules/expensa/expensa.module';
+import { GastoModule } from './modules/gasto/gasto.module';
+import { ConfigModule } from '@nestjs/config';
+import { dataSourceOptions } from './config/data-source';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: 'localhost',
-      port: 5432,
-      username: 'consorcio_user',
-      password: '1234',
-      database: 'consorcio_db',
-      entities: [__dirname + '/**/*.entity{.ts,.js}'],
-      synchronize: true, // Nota: synchronize:true es útil para desarrollo, pero se recomienda desactivarlo en producción.
+    ConfigModule.forRoot({
+      isGlobal: true,
     }),
+    TypeOrmModule.forRoot(dataSourceOptions),
     PersonaModule,
     UsuarioAppModule,
     UnidadFuncionalModule,

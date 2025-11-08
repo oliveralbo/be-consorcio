@@ -24,9 +24,6 @@ export class UsuarioApp {
   })
   rol: RolUsuario;
 
-  @Column({ default: true })
-  activo: boolean;
-
   @OneToOne(() => Persona)
   @JoinColumn({ name: 'id_persona' })
   persona: Persona;
