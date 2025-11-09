@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UsuarioApp } from './usuario.entity';
 import { Repository } from 'typeorm';
@@ -11,9 +11,16 @@ export class UsuarioService {
     private readonly usuarioRepository: Repository<UsuarioApp>,
   ) {}
 
-  create(createUsuarioDto: CreateUsuarioAppDto): Promise<UsuarioApp> {
+  async create(createUsuarioDto: CreateUsuarioAppDto): Promise<UsuarioApp> {
     const nuevoUsuario = this.usuarioRepository.create(createUsuarioDto);
-    return this.usuarioRepository.save(nuevoUsuario);
+    try {
+      return await this.usuarioRepository.save(nuevoUsuario);
+    } catch (error) {
+      if (error.code === '23505') {
+        throw new ConflictException('El email ya está en uso.');
+      }
+      throw error;
+    }
   }
 
   findAll(): Promise<UsuarioApp[]> {

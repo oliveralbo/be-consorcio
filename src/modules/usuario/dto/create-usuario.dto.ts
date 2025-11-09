@@ -8,7 +8,7 @@ export class CreateUsuarioAppDto {
 
   @IsString()
   @IsNotEmpty()
-  password_hash: string;
+  password: string;
 
   @IsEnum(RolUsuario)
   @IsNotEmpty()

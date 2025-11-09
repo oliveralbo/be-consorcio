@@ -7,7 +7,7 @@ import { UsuarioApp } from './usuario.entity';
 export class UsuarioController {
   constructor(private readonly usuarioService: UsuarioService) {}
 
-  @Post()
+  @Post('create')
   create(@Body() createUsuarioDto: CreateUsuarioAppDto): Promise<UsuarioApp> {
     return this.usuarioService.create(createUsuarioDto);
   }
