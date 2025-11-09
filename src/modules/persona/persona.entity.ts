@@ -12,12 +12,6 @@ export class Persona {
   apellido: string;
 
   @Column({ unique: true })
-  email: string;
-
-  @Column({ nullable: true })
-  telefono: string;
-
-  @Column({ unique: true })
   dni: string;
 
   @CreateDateColumn()

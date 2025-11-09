@@ -5,18 +5,22 @@ import { Repository } from 'typeorm';
 import { CreateUsuarioAppDto } from './dto/create-usuario.dto';
 
 @Injectable()
-export class UsuarioAppService {
+export class UsuarioService {
   constructor(
     @InjectRepository(UsuarioApp)
-    private readonly usuarioAppRepository: Repository<UsuarioApp>,
+    private readonly usuarioRepository: Repository<UsuarioApp>,
   ) {}
 
-  create(createUsuarioApp: CreateUsuarioAppDto): Promise<UsuarioApp> {
-    const nuevoUsuario = this.usuarioAppRepository.create(createUsuarioApp);
-    return this.usuarioAppRepository.save(nuevoUsuario);
+  create(createUsuarioDto: CreateUsuarioAppDto): Promise<UsuarioApp> {
+    const nuevoUsuario = this.usuarioRepository.create(createUsuarioDto);
+    return this.usuarioRepository.save(nuevoUsuario);
   }
 
   findAll(): Promise<UsuarioApp[]> {
-    return this.usuarioAppRepository.find();
+    return this.usuarioRepository.find();
+  }
+
+  async findOneByEmail(email: string): Promise<UsuarioApp | null> {
+    return this.usuarioRepository.findOne({ where: { email_login: email } });
   }
 }
