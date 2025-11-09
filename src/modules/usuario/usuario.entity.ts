@@ -1,9 +1,19 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn, CreateDateColumn, UpdateDateColumn, DeleteDateColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToOne,
+  JoinColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  DeleteDateColumn,
+} from 'typeorm';
 import { Persona } from '../persona/persona.entity';
 
 export enum RolUsuario {
   TESORERO = 'tesorero',
   VECINO = 'vecino',
+  ADMIN = 'administrador',
 }
 
 @Entity()
