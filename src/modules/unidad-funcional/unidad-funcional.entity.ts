@@ -9,11 +9,14 @@ export class UnidadFuncional {
   @Column()
   numero: string;
 
-  @Column('decimal', { precision: 10, scale: 2 })
-  superficie: number;
+  @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true })
+  superficie?: number;
 
   @Column()
   ambientes: number;
+
+  @Column({ default: 'PB' })
+  piso: string;
 
   @ManyToOne(() => Persona)
   @JoinColumn({ name: 'id_propietario' })
@@ -21,10 +24,7 @@ export class UnidadFuncional {
 
   @ManyToOne(() => Persona, { nullable: true })
   @JoinColumn({ name: 'id_inquilino' })
-  inquilino: Persona;
-
-  @Column('decimal', { precision: 5, scale: 4 })
-  coeficiente: number;
+  inquilino?: Persona;
 
   @CreateDateColumn()
   created_at: Date;

@@ -1,4 +1,10 @@
-import { IsString, IsNotEmpty, IsNumber, IsUUID, IsOptional } from 'class-validator';
+import {
+  IsString,
+  IsNotEmpty,
+  IsNumber,
+  IsUUID,
+  IsOptional,
+} from 'class-validator';
 
 export class CreateUnidadFuncionalDto {
   @IsString()
@@ -6,13 +12,15 @@ export class CreateUnidadFuncionalDto {
   numero: string;
 
   @IsNumber()
-  superficie: number;
+  @IsOptional()
+  superficie?: number;
 
   @IsNumber()
   ambientes: number;
 
-  @IsNumber()
-  coeficiente: number;
+  @IsString()
+  @IsOptional()
+  piso?: string;
 
   @IsUUID()
   id_propietario: string;
