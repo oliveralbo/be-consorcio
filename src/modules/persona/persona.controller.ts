@@ -11,7 +11,7 @@ import { RolUsuario } from '../usuario/usuario.entity';
 export class PersonaController {
   constructor(private readonly personaService: PersonaService) {}
 
-  @Post()
+  @Post('create')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(RolUsuario.ADMIN)
   create(@Body() createPersonaDto: CreatePersonaDto): Promise<Persona> {
