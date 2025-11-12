@@ -24,7 +24,7 @@ export class UnidadFuncional {
 
   @ManyToOne(() => Persona, { nullable: true })
   @JoinColumn({ name: 'id_inquilino' })
-  inquilino?: Persona;
+  inquilino?: Persona | null;
 
   @CreateDateColumn()
   created_at: Date;

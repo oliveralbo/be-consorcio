@@ -10,6 +10,7 @@ import { GastoModule } from './modules/gasto/gasto.module';
 import { ConfigModule } from '@nestjs/config';
 import { dataSourceOptions } from './config/data-source';
 import { AuthModule } from './modules/auth/auth.module';
+import { DashboardModule } from './dashboard/dashboard.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { AuthModule } from './modules/auth/auth.module';
     ExpensaModule,
     GastoModule,
     AuthModule,
+    DashboardModule,
   ],
   controllers: [AppController],
   providers: [AppService],
