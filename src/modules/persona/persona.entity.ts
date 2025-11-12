@@ -14,6 +14,9 @@ export class Persona {
   @Column({ unique: true })
   dni: string;
 
+  @Column()
+  telefono: string;
+
   @CreateDateColumn()
   created_at: Date;
 
