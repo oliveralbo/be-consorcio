@@ -1,19 +1,19 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
-import { UsuarioAppService } from './usuario.service';
+import { UsuarioService } from './usuario.service';
 import { CreateUsuarioAppDto } from './dto/create-usuario.dto';
 import { UsuarioApp } from './usuario.entity';
 
-@Controller('usuariosApp')
-export class UsuarioAppController {
-  constructor(private readonly usuarioAppService: UsuarioAppService) {}
+@Controller('usuarios')
+export class UsuarioController {
+  constructor(private readonly usuarioService: UsuarioService) {}
 
-  @Post()
-  create(@Body() createUsuarioAppDto: CreateUsuarioAppDto): Promise<UsuarioApp> {
-    return this.usuarioAppService.create(createUsuarioAppDto);
+  @Post('create')
+  create(@Body() createUsuarioDto: CreateUsuarioAppDto): Promise<UsuarioApp> {
+    return this.usuarioService.create(createUsuarioDto);
   }
 
   @Get()
   findAll(): Promise<UsuarioApp[]> {
-    return this.usuarioAppService.findAll();
+    return this.usuarioService.findAll();
   }
 }
