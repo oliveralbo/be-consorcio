@@ -9,6 +9,9 @@ export class Gasto {
   @Column()
   concepto: string;
 
+  @Column({ type: 'text', nullable: true })
+  descripcion?: string;
+
   @Column('decimal', { precision: 10, scale: 2 })
   monto: number;
 
