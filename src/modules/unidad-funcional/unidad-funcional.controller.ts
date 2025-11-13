@@ -22,9 +22,11 @@ import { RolUsuario } from '../usuario/usuario.entity';
 @Controller('unidades-funcionales')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class UnidadFuncionalController {
-  constructor(private readonly unidadFuncionalService: UnidadFuncionalService) {}
+  constructor(
+    private readonly unidadFuncionalService: UnidadFuncionalService,
+  ) {}
 
-  @Get()
+  @Get('create')
   @Roles(RolUsuario.ADMIN, RolUsuario.TESORERO, RolUsuario.VECINO)
   findAll(): Promise<UnidadFuncional[]> {
     return this.unidadFuncionalService.findAll();
@@ -32,7 +34,9 @@ export class UnidadFuncionalController {
 
   @Post()
   @Roles(RolUsuario.ADMIN)
-  create(@Body() createUnidadFuncionalDto: CreateUnidadFuncionalDto): Promise<UnidadFuncional> {
+  create(
+    @Body() createUnidadFuncionalDto: CreateUnidadFuncionalDto,
+  ): Promise<UnidadFuncional> {
     return this.unidadFuncionalService.create(createUnidadFuncionalDto);
   }
 

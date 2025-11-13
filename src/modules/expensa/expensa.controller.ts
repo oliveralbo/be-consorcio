@@ -23,7 +23,7 @@ import { RolUsuario } from '../usuario/usuario.entity';
 export class ExpensaController {
   constructor(private readonly expensaService: ExpensaService) {}
 
-  @Post()
+  @Post('create')
   @Roles(RolUsuario.ADMIN, RolUsuario.TESORERO)
   create(@Body() createExpensaDto: CreateExpensaDto) {
     return this.expensaService.create(createExpensaDto);

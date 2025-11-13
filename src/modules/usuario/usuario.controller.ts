@@ -23,7 +23,7 @@ import { Roles } from '../auth/decorators/roles.decorator';
 export class UsuarioController {
   constructor(private readonly usuarioService: UsuarioService) {}
 
-  @Post()
+  @Post('create')
   @Roles(RolUsuario.ADMIN)
   create(@Body() createUsuarioDto: CreateUsuarioAppDto): Promise<UsuarioApp> {
     return this.usuarioService.create(createUsuarioDto);
@@ -34,6 +34,7 @@ export class UsuarioController {
   findAll(): Promise<UsuarioApp[]> {
     return this.usuarioService.findAll();
   }
+  s;
 
   @Get(':id')
   @Roles(RolUsuario.ADMIN)

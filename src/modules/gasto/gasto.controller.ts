@@ -24,7 +24,7 @@ import { RolUsuario } from '../usuario/usuario.entity';
 export class GastoController {
   constructor(private readonly gastoService: GastoService) {}
 
-  @Post()
+  @Post('create')
   @Roles(RolUsuario.ADMIN, RolUsuario.TESORERO)
   create(@Body() createGastoDto: CreateGastoDto, @Request() req) {
     return this.gastoService.create(createGastoDto, req.user.id_usuario);
