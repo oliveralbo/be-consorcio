@@ -1,4 +1,8 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UsuarioApp } from './usuario.entity';
 import { Repository } from 'typeorm';
@@ -22,6 +26,7 @@ export class UsuarioService {
     try {
       return await this.usuarioRepository.save(nuevoUsuario);
     } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       if (error.code === '23505') {
         throw new ConflictException('El email ya está en uso.');
       }
@@ -34,7 +39,10 @@ export class UsuarioService {
   }
 
   async findOneByEmail(email: string): Promise<UsuarioApp | null> {
-    return this.usuarioRepository.findOne({ where: { email_login: email }, relations: ['persona'] });
+    return this.usuarioRepository.findOne({
+      where: { email_login: email },
+      relations: ['persona'],
+    });
   }
 
   async findOne(id: string): Promise<UsuarioApp> {
@@ -48,7 +56,10 @@ export class UsuarioService {
     return usuario;
   }
 
-  async update(id: string, updateUsuarioDto: UpdateUsuarioAppDto): Promise<UsuarioApp> {
+  async update(
+    id: string,
+    updateUsuarioDto: UpdateUsuarioAppDto,
+  ): Promise<UsuarioApp> {
     const { id_persona, password, ...data } = updateUsuarioDto;
 
     const usuario = await this.usuarioRepository.preload({
@@ -72,6 +83,7 @@ export class UsuarioService {
     try {
       return await this.usuarioRepository.save(usuario);
     } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       if (error.code === '23505') {
         throw new ConflictException('El email ya está en uso.');
       }

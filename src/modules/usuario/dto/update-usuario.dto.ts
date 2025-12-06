@@ -1,7 +1,5 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { CreateUsuarioAppDto } from './create-usuario.dto';
-import { IsString, IsOptional, IsEnum, IsUUID } from 'class-validator';
-import { RolUsuario } from '../usuario.entity';
 
 export class UpdateUsuarioAppDto extends PartialType(CreateUsuarioAppDto) {
   // PartialType makes all properties of CreateUsuarioAppDto optional.

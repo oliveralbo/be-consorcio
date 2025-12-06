@@ -29,7 +29,10 @@ export class PersonaService {
     return persona;
   }
 
-  async update(id: string, updatePersonaDto: UpdatePersonaDto): Promise<Persona> {
+  async update(
+    id: string,
+    updatePersonaDto: UpdatePersonaDto,
+  ): Promise<Persona> {
     const persona = await this.personaRepository.preload({
       id_persona: id,
       ...updatePersonaDto,

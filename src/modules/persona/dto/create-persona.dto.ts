@@ -12,4 +12,8 @@ export class CreatePersonaDto {
   @IsString()
   @IsNotEmpty()
   dni: string;
+
+  @IsString()
+  @IsNotEmpty()
+  telefono: string;
 }
