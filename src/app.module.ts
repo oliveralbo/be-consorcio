@@ -10,7 +10,8 @@ import { GastoModule } from './modules/gasto/gasto.module';
 import { ConfigModule } from '@nestjs/config';
 import { dataSourceOptions } from './config/data-source';
 import { AuthModule } from './modules/auth/auth.module';
-import { DashboardModule } from './dashboard/dashboard.module';
+import { DashboardModule } from './modules/dashboard/dashboard.module';
+import { CierreMensualModule } from './modules/cierre-mensual/cierre-mensual.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { DashboardModule } from './dashboard/dashboard.module';
     GastoModule,
     AuthModule,
     DashboardModule,
+    CierreMensualModule,
   ],
   controllers: [AppController],
   providers: [AppService],

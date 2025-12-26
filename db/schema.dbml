@@ -1,0 +1,107 @@
+//// --------------------------------------------------------------------------------
+//// DBML (Database Markup Language)
+////
+//// Website: https://dbml.org
+//// Docs:    https://dbml.org/docs
+//// --------------------------------------------------------------------------------
+
+
+// Enum definitions
+Enum RolUsuario {
+  TESORERO
+  VECINO
+  ADMIN
+}
+
+Enum TipoExpensa {
+  ORDINARIA
+  EXTRAORDINARIA
+}
+
+// Table definitions
+Table UsuarioApp as "usuario_app" {
+  id_usuario string [pk]
+  email_login string [unique, not null]
+  password string [not null]
+  rol RolUsuario [default: 'VECINO']
+  id_persona string
+  created_at datetime [default: `now()`]
+  updated_at datetime [default: `now()`]
+  deleted_at datetime
+}
+
+Table Persona as "persona" {
+  id_persona string [pk]
+  nombre string [not null]
+  apellido string [not null]
+  dni string [unique, not null]
+  telefono string [not null]
+  created_at datetime [default: `now()`]
+  updated_at datetime [default: `now()`]
+  deleted_at datetime
+}
+
+Table UnidadFuncional as "unidad_funcional" {
+  id_unidad string [pk]
+  numero string [not null]
+  superficie decimal(10, 2)
+  ambientes int [not null]
+  piso string [default: 'PB']
+  id_propietario string
+  id_inquilino string
+  created_at datetime [default: `now()`]
+  updated_at datetime [default: `now()`]
+  deleted_at datetime
+}
+
+Table Expensa as "expensa" {
+  id_expensa string [pk]
+  id_unidad string
+  mes int [not null]
+  anio int [not null]
+  tipo TipoExpensa [default: 'ORDINARIA']
+  descripcion text
+  monto decimal(10, 2) [not null]
+  pagado boolean [default: false]
+  fecha_pago date
+  created_at datetime [default: `now()`]
+  updated_at datetime [default: `now()`]
+  deleted_at datetime
+}
+
+Table Gasto as "gasto" {
+  id_gasto string [pk]
+  concepto string [not null]
+  descripcion text
+  monto decimal(10, 2) [not null]
+  fecha date [not null]
+  medio string [not null]
+  registrado_por string
+  created_at datetime [default: `now()`]
+  updated_at datetime [default: `now()`]
+  deleted_at datetime
+}
+
+Table CierreMensual as "cierre_mensual" {
+  id_cierre_mensual string [pk]
+  mes int [not null]
+  anio int [not null]
+  balanceInicial decimal(10, 2) [default: 0]
+  totalIngresos decimal(10, 2) [default: 0]
+  totalEgresos decimal(10, 2) [default: 0]
+  balanceFinal decimal(10, 2) [default: 0]
+  created_at datetime [default: `now()`]
+  updated_at datetime [default: `now()`]
+  deleted_at datetime
+
+  Indexes {
+    (mes, anio) [unique]
+  }
+}
+
+// Relationships
+Ref: "usuario_app".id_persona - "persona".id_persona
+Ref: "unidad_funcional".id_propietario > "persona".id_persona
+Ref: "unidad_funcional".id_inquilino > "persona".id_persona
+Ref: "expensa".id_unidad > "unidad_funcional".id_unidad
+Ref: "gasto".registrado_por > "usuario_app".id_usuario

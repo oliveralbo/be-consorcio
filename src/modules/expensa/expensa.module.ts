@@ -9,5 +9,6 @@ import { AuthModule } from '../auth/auth.module';
   imports: [TypeOrmModule.forFeature([Expensa]), AuthModule],
   providers: [ExpensaService],
   controllers: [ExpensaController],
+  exports: [ExpensaService],
 })
 export class ExpensaModule {}

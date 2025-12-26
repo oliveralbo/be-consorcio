@@ -1,0 +1,47 @@
+{
+  "version": "1.0.0",
+  "darkMode": true,
+  "gridEnabling": false,
+  "detailLevel": "All",
+  "tablePositions": [
+    {
+      "name": "UsuarioApp",
+      "schemaName": "public",
+      "x": 12,
+      "y": 450
+    },
+    {
+      "name": "Persona",
+      "schemaName": "public",
+      "x": 122.80886419191242,
+      "y": 842.2614813688795
+    },
+    {
+      "name": "UnidadFuncional",
+      "schemaName": "public",
+      "x": 638.8831444984364,
+      "y": 799.9587725938043
+    },
+    {
+      "name": "Expensa",
+      "schemaName": "public",
+      "x": 899.704465936254,
+      "y": 244.25500732122492
+    },
+    {
+      "name": "Gasto",
+      "schemaName": "public",
+      "x": 470.64124763712107,
+      "y": 238.64477521782317
+    },
+    {
+      "name": "CierreMensual",
+      "schemaName": "public",
+      "x": 12,
+      "y": 12
+    }
+  ],
+  "tableGroupCollapseStates": [],
+  "stickyNoteLayouts": [],
+  "referencePaths": []
+}

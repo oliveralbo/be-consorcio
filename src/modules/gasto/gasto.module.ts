@@ -9,5 +9,6 @@ import { AuthModule } from '../auth/auth.module';
   imports: [TypeOrmModule.forFeature([Gasto]), AuthModule],
   providers: [GastoService],
   controllers: [GastoController],
+  exports: [GastoService],
 })
 export class GastoModule {}

@@ -1,0 +1,14 @@
+import { Module } from '@nestjs/common';
+import { DashboardController } from './dashboard.controller';
+import { DashboardService } from './dashboard.service';
+import { AuthModule } from '../../modules/auth/auth.module';
+import { GastoModule } from '../gasto/gasto.module';
+import { ExpensaModule } from '../expensa/expensa.module';
+import { CierreMensualModule } from '../cierre-mensual/cierre-mensual.module';
+
+@Module({
+  imports: [AuthModule, GastoModule, ExpensaModule, CierreMensualModule],
+  controllers: [DashboardController],
+  providers: [DashboardService],
+})
+export class DashboardModule {}

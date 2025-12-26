@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { FindManyOptions, Repository } from 'typeorm';
 import { Gasto } from './gasto.entity';
 import { CreateGastoDto } from './dto/create-gasto.dto';
 import { UpdateGastoDto } from './dto/update-gasto.dto';
@@ -22,10 +22,11 @@ export class GastoService {
     return this.gastoRepository.save(newGasto);
   }
 
-  async findAll(): Promise<Gasto[]> {
-    return this.gastoRepository.find({
+  async findAll(options?: FindManyOptions<Gasto>): Promise<Gasto[]> {
+    const defaultOptions: FindManyOptions<Gasto> = {
       relations: ['registrado_por', 'registrado_por.persona'],
-    });
+    };
+    return this.gastoRepository.find({ ...defaultOptions, ...options });
   }
 
   async findOne(id: string): Promise<Gasto> {
