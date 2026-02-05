@@ -33,15 +33,85 @@
       "schemaName": "public",
       "x": 470.64124763712107,
       "y": 238.64477521782317
-    },
-    {
-      "name": "CierreMensual",
-      "schemaName": "public",
-      "x": 12,
-      "y": 12
     }
   ],
   "tableGroupCollapseStates": [],
   "stickyNoteLayouts": [],
-  "referencePaths": []
+  "referencePaths": [
+    {
+      "firstFieldNames": [
+        "id_persona"
+      ],
+      "firstTableName": "UsuarioApp",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
+        "id_persona"
+      ],
+      "secondTableName": "Persona",
+      "secondSchemaName": "public",
+      "secondRelation": "1",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "id_propietario"
+      ],
+      "firstTableName": "UnidadFuncional",
+      "firstSchemaName": "public",
+      "firstRelation": "*",
+      "secondFieldNames": [
+        "id_persona"
+      ],
+      "secondTableName": "Persona",
+      "secondSchemaName": "public",
+      "secondRelation": "1",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "id_inquilino"
+      ],
+      "firstTableName": "UnidadFuncional",
+      "firstSchemaName": "public",
+      "firstRelation": "*",
+      "secondFieldNames": [
+        "id_persona"
+      ],
+      "secondTableName": "Persona",
+      "secondSchemaName": "public",
+      "secondRelation": "1",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "id_unidad"
+      ],
+      "firstTableName": "Expensa",
+      "firstSchemaName": "public",
+      "firstRelation": "*",
+      "secondFieldNames": [
+        "id_unidad"
+      ],
+      "secondTableName": "UnidadFuncional",
+      "secondSchemaName": "public",
+      "secondRelation": "1",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "registrado_por"
+      ],
+      "firstTableName": "Gasto",
+      "firstSchemaName": "public",
+      "firstRelation": "*",
+      "secondFieldNames": [
+        "id_usuario"
+      ],
+      "secondTableName": "UsuarioApp",
+      "secondSchemaName": "public",
+      "secondRelation": "1",
+      "checkPoints": []
+    }
+  ]
 }
