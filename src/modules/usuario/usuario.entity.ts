@@ -36,7 +36,7 @@ export class UsuarioApp {
   })
   rol: RolUsuario;
 
-  @OneToOne(() => Persona, { onDelete: 'CASCADE' })
+  @OneToOne(() => Persona, { onDelete: 'CASCADE', nullable: false })
   @JoinColumn({ name: 'id_persona' })
   persona: Persona;
 

@@ -26,7 +26,7 @@ export class UnidadFuncionalController {
     private readonly unidadFuncionalService: UnidadFuncionalService,
   ) {}
 
-  @Get('create')
+  @Get()
   @Roles(RolUsuario.ADMIN, RolUsuario.TESORERO, RolUsuario.VECINO)
   findAll(): Promise<UnidadFuncional[]> {
     return this.unidadFuncionalService.findAll();
