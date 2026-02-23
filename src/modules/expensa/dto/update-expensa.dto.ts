@@ -1,11 +1,12 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { CreateExpensaDto } from './create-expensa.dto';
-import { IsBoolean, IsDateString, IsOptional } from 'class-validator';
+import { IsDateString, IsNumber, IsOptional, Min } from 'class-validator';
 
 export class UpdateExpensaDto extends PartialType(CreateExpensaDto) {
-  @IsBoolean()
+  @IsNumber()
   @IsOptional()
-  pagado?: boolean;
+  @Min(0)
+  monto_pagado?: number;
 
   @IsDateString()
   @IsOptional()

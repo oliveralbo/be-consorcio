@@ -13,6 +13,7 @@ import {
 import { ExpensaService } from './expensa.service';
 import { CreateExpensaDto } from './dto/create-expensa.dto';
 import { UpdateExpensaDto } from './dto/update-expensa.dto';
+import { GenerarExpensasDto } from './dto/generar-expensas.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
@@ -27,6 +28,15 @@ export class ExpensaController {
   @Roles(RolUsuario.ADMIN, RolUsuario.TESORERO)
   create(@Body() createExpensaDto: CreateExpensaDto) {
     return this.expensaService.create(createExpensaDto);
+  }
+
+  @Post('generar-mes')
+  @Roles(RolUsuario.ADMIN, RolUsuario.TESORERO)
+  generarMes(@Body() generarExpensasDto: GenerarExpensasDto) {
+    return this.expensaService.generarExpensasMes(
+      generarExpensasDto.mes,
+      generarExpensasDto.anio,
+    );
   }
 
   @Get()

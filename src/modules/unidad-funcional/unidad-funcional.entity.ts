@@ -27,6 +27,9 @@ export class UnidadFuncional {
   @Column({ default: 'PB' })
   piso: string;
 
+  @Column('decimal', { precision: 10, scale: 2, default: 0 })
+  monto_base: number;
+
   @ManyToOne(() => Persona)
   @JoinColumn({ name: 'id_propietario' })
   propietario: Persona;

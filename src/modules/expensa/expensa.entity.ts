@@ -1,9 +1,24 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn, UpdateDateColumn, DeleteDateColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  JoinColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  DeleteDateColumn,
+} from 'typeorm';
 import { UnidadFuncional } from '../unidad-funcional/unidad-funcional.entity';
 
 export enum TipoExpensa {
   ORDINARIA = 'ordinaria',
   EXTRAORDINARIA = 'extraordinaria',
+}
+
+export enum EstadoExpensa {
+  PENDIENTE = 'pendiente',
+  PARCIAL = 'parcial',
+  PAGADO = 'pagado',
 }
 
 @Entity()
@@ -34,8 +49,18 @@ export class Expensa {
   @Column('decimal', { precision: 10, scale: 2 })
   monto: number;
 
-  @Column({ default: false })
-  pagado: boolean;
+  @Column('decimal', { precision: 10, scale: 2, default: 0 })
+  monto_pagado: number;
+
+  @Column({
+    type: 'enum',
+    enum: EstadoExpensa,
+    default: EstadoExpensa.PENDIENTE,
+  })
+  estado: EstadoExpensa;
+
+  @Column({ type: 'date', nullable: true })
+  fecha_vencimiento: Date;
 
   @Column({ type: 'date', nullable: true })
   fecha_pago: Date;

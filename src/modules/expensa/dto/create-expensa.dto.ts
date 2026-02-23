@@ -1,13 +1,12 @@
 import {
-  IsString,
+  IsDateString,
+  IsEnum,
   IsNotEmpty,
   IsNumber,
-  IsEnum,
   IsOptional,
+  IsString,
   IsUUID,
-  IsInt,
   Min,
-  Max,
 } from 'class-validator';
 import { TipoExpensa } from '../expensa.entity';
 
@@ -16,20 +15,19 @@ export class CreateExpensaDto {
   @IsNotEmpty()
   id_unidad: string;
 
-  @IsInt()
-  @Min(1)
-  @Max(12)
+  @IsNumber()
   @IsNotEmpty()
+  @Min(1)
   mes: number;
 
-  @IsInt()
-  @Min(2020)
+  @IsNumber()
   @IsNotEmpty()
+  @Min(2000)
   anio: number;
 
   @IsEnum(TipoExpensa)
-  @IsNotEmpty()
-  tipo: TipoExpensa;
+  @IsOptional()
+  tipo?: TipoExpensa;
 
   @IsString()
   @IsOptional()
@@ -37,5 +35,10 @@ export class CreateExpensaDto {
 
   @IsNumber()
   @IsNotEmpty()
+  @Min(0)
   monto: number;
+
+  @IsDateString()
+  @IsOptional()
+  fecha_vencimiento?: Date;
 }

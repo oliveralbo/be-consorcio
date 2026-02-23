@@ -22,6 +22,10 @@ export class CreateUnidadFuncionalDto {
   @IsOptional()
   piso?: string;
 
+  @IsNumber()
+  @IsOptional()
+  monto_base?: number;
+
   @IsUUID()
   id_propietario: string;
 

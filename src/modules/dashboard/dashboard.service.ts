@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { GastoService } from '../gasto/gasto.service';
 import { ExpensaService } from '../expensa/expensa.service';
+import { EstadoExpensa } from '../expensa/expensa.entity';
 
 @Injectable()
 export class DashboardService {
@@ -24,7 +25,7 @@ export class DashboardService {
     // 2. Calcular todos los ingresos (Expensas pagadas) históricos
     const todasLasExpensasPagadas = await this.expensaService.findAll({
       where: {
-        pagado: true,
+        estado: EstadoExpensa.PAGADO,
       },
     });
     const totalIngresos = todasLasExpensasPagadas.reduce(

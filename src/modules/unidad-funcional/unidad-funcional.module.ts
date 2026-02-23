@@ -8,5 +8,6 @@ import { UnidadFuncionalService } from './unidad-funcional.service';
   imports: [TypeOrmModule.forFeature([UnidadFuncional])],
   providers: [UnidadFuncionalService],
   controllers: [UnidadFuncionalController],
+  exports: [UnidadFuncionalService],
 })
 export class UnidadFuncionalModule {}
