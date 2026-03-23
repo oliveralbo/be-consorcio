@@ -1,5 +1,19 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn, UpdateDateColumn, DeleteDateColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  JoinColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  DeleteDateColumn,
+} from 'typeorm';
 import { UsuarioApp } from '../usuario/usuario.entity';
+
+export enum TipoGasto {
+  MENSUAL = 'mensual',
+  EXTRAORDINARIO = 'extraordinario',
+}
 
 @Entity()
 export class Gasto {
@@ -24,6 +38,13 @@ export class Gasto {
   @ManyToOne(() => UsuarioApp)
   @JoinColumn({ name: 'registrado_por' })
   registrado_por: UsuarioApp;
+
+  @Column({
+    type: 'enum',
+    enum: TipoGasto,
+    default: TipoGasto.MENSUAL,
+  })
+  tipo: TipoGasto;
 
   @CreateDateColumn()
   created_at: Date;
