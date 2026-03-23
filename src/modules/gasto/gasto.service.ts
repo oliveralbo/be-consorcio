@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindManyOptions, Repository } from 'typeorm';
-import { Gasto } from './gasto.entity';
+import { FindManyOptions, Repository, Between } from 'typeorm';
+import { Gasto, TipoGasto } from './gasto.entity';
 import { CreateGastoDto } from './dto/create-gasto.dto';
 import { UpdateGastoDto } from './dto/update-gasto.dto';
 import { UsuarioApp } from '../usuario/usuario.entity';
@@ -20,6 +20,51 @@ export class GastoService {
     });
 
     return this.gastoRepository.save(newGasto);
+  }
+
+  async generarMes(mes: number, anio: number, userId: string): Promise<Gasto[]> {
+    // 1. Calcular mes y año anterior
+    let mesAnterior = mes - 1;
+    let anioAnterior = anio;
+    if (mesAnterior === 0) {
+      mesAnterior = 12;
+      anioAnterior = anio - 1;
+    }
+
+    // 2. Buscar gastos del mes anterior (tipo mensual)
+    const fechaInicioAnterior = new Date(anioAnterior, mesAnterior - 1, 1);
+    const fechaFinAnterior = new Date(anioAnterior, mesAnterior, 0);
+
+    const gastosAnteriores = await this.gastoRepository.find({
+      where: {
+        tipo: TipoGasto.MENSUAL,
+        fecha: Between(fechaInicioAnterior, fechaFinAnterior),
+      },
+    });
+
+    // 3. Si no hay gastos, lanzar excepción
+    if (gastosAnteriores.length === 0) {
+      throw new NotFoundException(
+        'No se encontraron gastos mensuales en el período anterior para copiar',
+      );
+    }
+
+    // 4 & 5. Clonar y establecer nueva fecha (primer día del mes solicitado)
+    const fechaNueva = new Date(anio, mes - 1, 1);
+    const nuevosGastos = gastosAnteriores.map((gasto) => {
+      return this.gastoRepository.create({
+        concepto: gasto.concepto,
+        descripcion: gasto.descripcion,
+        monto: gasto.monto,
+        medio: gasto.medio,
+        tipo: TipoGasto.MENSUAL,
+        fecha: fechaNueva,
+        registrado_por: { id_usuario: userId } as UsuarioApp,
+      });
+    });
+
+    // 6. Guardar y retornar
+    return this.gastoRepository.save(nuevosGastos);
   }
 
   async findAll(options?: FindManyOptions<Gasto>): Promise<Gasto[]> {
