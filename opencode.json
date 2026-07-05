@@ -10,9 +10,9 @@
     ".agents/context/07-database-and-infra.md",
     ".agents/rules/ejemplo-regla.md"
   ],
-  "project": {
-    "name": "be-consorcio",
-    "language": "typescript",
-    "framework": "nestjs"
+  "permission": {
+    "skill": {
+      "*": "allow"
+    }
   }
 }
