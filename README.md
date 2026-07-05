@@ -1,98 +1,135 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# be-consorcio
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+API REST para administración de consorcios. NestJS 11 + TypeORM + PostgreSQL 14.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+---
 
-## Description
+## Requisitos
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- Node.js 18+
+- Docker y Docker Compose (para la base de datos)
+- npm
 
-## Project setup
+---
 
-```bash
-$ npm install
+## Entorno
+
+Crear archivo `.env` en la raíz (ya incluido en el repo):
+
+```
+DB_HOST=localhost
+DB_PORT=5433
+DB_USERNAME=consorcio_user
+DB_PASSWORD=1234
+DB_DATABASE=consorcio_db
+JWT_SECRET=SECRET_KEY_PARA_PRODUCCION
 ```
 
-## Compile and run the project
+---
 
-```bash
-# development
-$ npm run start
+## Base de datos con Docker
 
-# watch mode
-$ npm run start:dev
+La DB corre en un contenedor PostgreSQL 14. El `docker-compose.yml` expone:
 
-# production mode
-$ npm run start:prod
+```yaml
+ports:
+  - "5433:5432"
 ```
 
-## Run tests
+**Significado:** el puerto `5433` de tu máquina local (host) se redirige al puerto `5432` del contenedor.  
+`5433` es el puerto por el que accedés **desde tu PC** (localhost:5433).  
+`5432` es el puerto **interno del contenedor** al que se conecta la app cuando corre también en Docker.
+
+### Levantar solo la DB (recomendado para desarrollo local)
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+docker compose up db -d
 ```
 
-## Deployment
+La app la corrés localmente con `npm run start:dev`.  
+En `.env` usás `DB_HOST=localhost` y `DB_PORT=5433`.
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+La app se levanta en **`http://localhost:3001`**.
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+### Conectarse desde DBeaver / cualquier cliente SQL
+
+| Campo | Valor |
+|---|---|
+| Host | `localhost` |
+| Puerto | `5433` |
+| Database | `consorcio_db` |
+| Usuario | `consorcio_user` |
+| Password | `1234` |
+
+### Levantar todo (app + db)
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+docker compose up -d
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+La app queda en **`http://localhost:3000`** (puerto interno del contenedor).  
+El `.env` **no se usa** en este caso; Docker pasa sus propias variables al contenedor app con `DB_HOST=db`.
 
-## Resources
+---
 
-Check out a few resources that may come in handy when working with NestJS:
+## Comandos
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+```bash
+# Instalar dependencias
+npm install
 
-## Support
+# Desarrollo (DB en Docker, app local)
+npm run start:dev
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+# Migraciones (después de levantar la DB)
+npm run migration:run
 
-## Stay in touch
+# Generar migración
+npm run migration:generate -- src/migrations/NombreMigration
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+# Revertir migración
+npm run migration:revert
 
-## License
+# Seed: crear usuario administrador
+npm run seed:admin
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+# Tests
+npm run test
+npm run test:e2e
+
+# Lint
+npm run lint
+```
+
+---
+
+## API
+
+| Recurso | Base URL |
+|---|---|
+| App local | `http://localhost:3001` |
+| App Docker | `http://localhost:3000` |
+
+Endpoint público: `GET /` → `"API CONSORCIO - NESTJS 11"`
+
+Documentación de endpoints en `.agents/context/04-api-endpoints.md`.
+
+---
+
+## Estructura del proyecto
+
+```
+src/
+├── main.ts                    # Bootstrap, CORS, ValidationPipe
+├── config/data-source.ts      # TypeORM DataSource
+├── modules/
+│   ├── auth/                  # JWT, Passport, guards, decorators
+│   ├── persona/               # CRUD personas
+│   ├── usuario/               # CRUD usuarios del sistema
+│   ├── unidad-funcional/      # CRUD unidades funcionales
+│   ├── expensa/               # Expensas + generación mensual
+│   ├── gasto/                 # Gastos + generación mensual
+│   └── dashboard/             # Balance financiero
+├── migrations/                # Migraciones TypeORM
+└── seeds/                     # Seeders (admin-user)
+```

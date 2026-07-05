@@ -1,0 +1,18 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "instructions": [
+    ".agents/context/01-project-overview.md",
+    ".agents/context/02-architecture.md",
+    ".agents/context/03-entities.md",
+    ".agents/context/04-api-endpoints.md",
+    ".agents/context/05-auth-and-guards.md",
+    ".agents/context/06-business-logic.md",
+    ".agents/context/07-database-and-infra.md",
+    ".agents/rules/ejemplo-regla.md"
+  ],
+  "project": {
+    "name": "be-consorcio",
+    "language": "typescript",
+    "framework": "nestjs"
+  }
+}

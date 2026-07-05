@@ -8,14 +8,25 @@
 
 // Enum definitions
 Enum RolUsuario {
-  TESORERO
-  VECINO
-  ADMIN
+  tesorero
+  vecino
+  administrador
 }
 
 Enum TipoExpensa {
-  ORDINARIA
-  EXTRAORDINARIA
+  ordinaria
+  extraordinaria
+}
+
+Enum EstadoExpensa {
+  pendiente
+  parcial
+  pagado
+}
+
+Enum TipoGasto {
+  mensual
+  extraordinario
 }
 
 // Table definitions
@@ -23,8 +34,8 @@ Table UsuarioApp as "usuario_app" {
   id_usuario string [pk]
   email_login string [unique, not null]
   password string [not null]
-  rol RolUsuario [default: 'VECINO']
-  id_persona string
+  rol RolUsuario [default: 'vecino']
+  id_persona string [not null, unique]
   created_at datetime [default: `now()`]
   updated_at datetime [default: `now()`]
   deleted_at datetime
@@ -47,6 +58,7 @@ Table UnidadFuncional as "unidad_funcional" {
   superficie decimal(10, 2)
   ambientes int [not null]
   piso string [default: 'PB']
+  monto_base decimal(10, 2) [default: 0]
   id_propietario string
   id_inquilino string
   created_at datetime [default: `now()`]
@@ -59,10 +71,12 @@ Table Expensa as "expensa" {
   id_unidad string
   mes int [not null]
   anio int [not null]
-  tipo TipoExpensa [default: 'ORDINARIA']
+  tipo TipoExpensa [default: 'ordinaria']
   descripcion text
   monto decimal(10, 2) [not null]
-  pagado boolean [default: false]
+  monto_pagado decimal(10, 2) [default: 0]
+  estado EstadoExpensa [default: 'pendiente']
+  fecha_vencimiento date
   fecha_pago date
   created_at datetime [default: `now()`]
   updated_at datetime [default: `now()`]
@@ -77,6 +91,7 @@ Table Gasto as "gasto" {
   fecha date [not null]
   medio string [not null]
   registrado_por string
+  tipo TipoGasto [default: 'mensual']
   created_at datetime [default: `now()`]
   updated_at datetime [default: `now()`]
   deleted_at datetime

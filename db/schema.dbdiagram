@@ -1,117 +1,121 @@
 {
-  "version": "1.0.0",
+  "version": "2.0.0",
   "darkMode": true,
   "gridEnabling": false,
-  "detailLevel": "All",
-  "tablePositions": [
-    {
-      "name": "UsuarioApp",
-      "schemaName": "public",
-      "x": 12,
-      "y": 450
-    },
-    {
-      "name": "Persona",
-      "schemaName": "public",
-      "x": 122.80886419191242,
-      "y": 842.2614813688795
-    },
-    {
-      "name": "UnidadFuncional",
-      "schemaName": "public",
-      "x": 638.8831444984364,
-      "y": 799.9587725938043
-    },
-    {
-      "name": "Expensa",
-      "schemaName": "public",
-      "x": 899.704465936254,
-      "y": 244.25500732122492
-    },
-    {
-      "name": "Gasto",
-      "schemaName": "public",
-      "x": 470.64124763712107,
-      "y": 238.64477521782317
-    }
-  ],
-  "tableGroupCollapseStates": [],
-  "stickyNoteLayouts": [],
-  "referencePaths": [
-    {
-      "firstFieldNames": [
-        "id_persona"
-      ],
-      "firstTableName": "UsuarioApp",
-      "firstSchemaName": "public",
-      "firstRelation": "1",
-      "secondFieldNames": [
-        "id_persona"
-      ],
-      "secondTableName": "Persona",
-      "secondSchemaName": "public",
-      "secondRelation": "1",
-      "checkPoints": []
-    },
-    {
-      "firstFieldNames": [
-        "id_propietario"
-      ],
-      "firstTableName": "UnidadFuncional",
-      "firstSchemaName": "public",
-      "firstRelation": "*",
-      "secondFieldNames": [
-        "id_persona"
-      ],
-      "secondTableName": "Persona",
-      "secondSchemaName": "public",
-      "secondRelation": "1",
-      "checkPoints": []
-    },
-    {
-      "firstFieldNames": [
-        "id_inquilino"
-      ],
-      "firstTableName": "UnidadFuncional",
-      "firstSchemaName": "public",
-      "firstRelation": "*",
-      "secondFieldNames": [
-        "id_persona"
-      ],
-      "secondTableName": "Persona",
-      "secondSchemaName": "public",
-      "secondRelation": "1",
-      "checkPoints": []
-    },
-    {
-      "firstFieldNames": [
-        "id_unidad"
-      ],
-      "firstTableName": "Expensa",
-      "firstSchemaName": "public",
-      "firstRelation": "*",
-      "secondFieldNames": [
-        "id_unidad"
-      ],
-      "secondTableName": "UnidadFuncional",
-      "secondSchemaName": "public",
-      "secondRelation": "1",
-      "checkPoints": []
-    },
-    {
-      "firstFieldNames": [
-        "registrado_por"
-      ],
-      "firstTableName": "Gasto",
-      "firstSchemaName": "public",
-      "firstRelation": "*",
-      "secondFieldNames": [
-        "id_usuario"
-      ],
-      "secondTableName": "UsuarioApp",
-      "secondSchemaName": "public",
-      "secondRelation": "1",
-      "checkPoints": []
-    }
-  ]
+  "currentViewName": null,
+  "defaultView": {
+    "detailLevel": "All",
+    "tablePositions": [
+      {
+        "name": "UsuarioApp",
+        "schemaName": "public",
+        "x": 12,
+        "y": 12
+      },
+      {
+        "name": "Persona",
+        "schemaName": "public",
+        "x": 502.49873046875,
+        "y": 12
+      },
+      {
+        "name": "UnidadFuncional",
+        "schemaName": "public",
+        "x": 974.04853515625,
+        "y": 12
+      },
+      {
+        "name": "Expensa",
+        "schemaName": "public",
+        "x": 1467.6642578125,
+        "y": 12
+      },
+      {
+        "name": "Gasto",
+        "schemaName": "public",
+        "x": 502.49873046875,
+        "y": 346
+      }
+    ],
+    "tableGroupCollapseStates": [],
+    "stickyNoteLayouts": [],
+    "referencePaths": [
+      {
+        "firstFieldNames": [
+          "id_persona"
+        ],
+        "firstTableName": "UsuarioApp",
+        "firstSchemaName": "public",
+        "firstRelation": "1",
+        "secondFieldNames": [
+          "id_persona"
+        ],
+        "secondTableName": "Persona",
+        "secondSchemaName": "public",
+        "secondRelation": "1",
+        "checkPoints": []
+      },
+      {
+        "firstFieldNames": [
+          "id_propietario"
+        ],
+        "firstTableName": "UnidadFuncional",
+        "firstSchemaName": "public",
+        "firstRelation": "*",
+        "secondFieldNames": [
+          "id_persona"
+        ],
+        "secondTableName": "Persona",
+        "secondSchemaName": "public",
+        "secondRelation": "1",
+        "checkPoints": []
+      },
+      {
+        "firstFieldNames": [
+          "id_inquilino"
+        ],
+        "firstTableName": "UnidadFuncional",
+        "firstSchemaName": "public",
+        "firstRelation": "*",
+        "secondFieldNames": [
+          "id_persona"
+        ],
+        "secondTableName": "Persona",
+        "secondSchemaName": "public",
+        "secondRelation": "1",
+        "checkPoints": []
+      },
+      {
+        "firstFieldNames": [
+          "id_unidad"
+        ],
+        "firstTableName": "Expensa",
+        "firstSchemaName": "public",
+        "firstRelation": "*",
+        "secondFieldNames": [
+          "id_unidad"
+        ],
+        "secondTableName": "UnidadFuncional",
+        "secondSchemaName": "public",
+        "secondRelation": "1",
+        "checkPoints": []
+      },
+      {
+        "firstFieldNames": [
+          "registrado_por"
+        ],
+        "firstTableName": "Gasto",
+        "firstSchemaName": "public",
+        "firstRelation": "*",
+        "secondFieldNames": [
+          "id_usuario"
+        ],
+        "secondTableName": "UsuarioApp",
+        "secondSchemaName": "public",
+        "secondRelation": "1",
+        "checkPoints": []
+      }
+    ]
+  },
+  "views": {}
 }
