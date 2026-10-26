@@ -14,16 +14,22 @@ export class UnidadFuncionalService {
   ) {}
 
   findAll(): Promise<UnidadFuncional[]> {
-    return this.unidadFuncionalRepository.find({ relations: ['propietario', 'inquilino'] });
+    return this.unidadFuncionalRepository.find({
+      relations: ['propietario', 'inquilino'],
+    });
   }
 
-  async create(createUnidadFuncionalDto: CreateUnidadFuncionalDto): Promise<UnidadFuncional> {
+  async create(
+    createUnidadFuncionalDto: CreateUnidadFuncionalDto,
+  ): Promise<UnidadFuncional> {
     const { id_propietario, id_inquilino, ...rest } = createUnidadFuncionalDto;
 
     const nuevaUnidad = this.unidadFuncionalRepository.create({
       ...rest,
       propietario: { id_persona: id_propietario } as Persona,
-      ...(id_inquilino && { inquilino: { id_persona: id_inquilino } as Persona }),
+      ...(id_inquilino && {
+        inquilino: { id_persona: id_inquilino } as Persona,
+      }),
     });
 
     return this.unidadFuncionalRepository.save(nuevaUnidad);
@@ -35,12 +41,17 @@ export class UnidadFuncionalService {
       relations: ['propietario', 'inquilino'],
     });
     if (!unidad) {
-      throw new NotFoundException(`Unidad Funcional con ID "${id}" no encontrada.`);
+      throw new NotFoundException(
+        `Unidad Funcional con ID "${id}" no encontrada.`,
+      );
     }
     return unidad;
   }
 
-  async update(id: string, updateUnidadFuncionalDto: UpdateUnidadFuncionalDto): Promise<UnidadFuncional> {
+  async update(
+    id: string,
+    updateUnidadFuncionalDto: UpdateUnidadFuncionalDto,
+  ): Promise<UnidadFuncional> {
     const { id_propietario, id_inquilino, ...data } = updateUnidadFuncionalDto;
 
     const unidad = await this.unidadFuncionalRepository.preload({
@@ -49,14 +60,18 @@ export class UnidadFuncionalService {
     });
 
     if (!unidad) {
-      throw new NotFoundException(`Unidad Funcional con ID "${id}" no encontrada.`);
+      throw new NotFoundException(
+        `Unidad Funcional con ID "${id}" no encontrada.`,
+      );
     }
 
     if (id_propietario) {
       unidad.propietario = { id_persona: id_propietario } as Persona;
     }
     if (id_inquilino !== undefined) {
-      unidad.inquilino = id_inquilino ? ({ id_persona: id_inquilino } as Persona) : null;
+      unidad.inquilino = id_inquilino
+        ? ({ id_persona: id_inquilino } as Persona)
+        : null;
     }
 
     return this.unidadFuncionalRepository.save(unidad);
@@ -65,7 +80,9 @@ export class UnidadFuncionalService {
   async remove(id: string): Promise<void> {
     const result = await this.unidadFuncionalRepository.softDelete(id);
     if (result.affected === 0) {
-      throw new NotFoundException(`Unidad Funcional con ID "${id}" no encontrada.`);
+      throw new NotFoundException(
+        `Unidad Funcional con ID "${id}" no encontrada.`,
+      );
     }
   }
 }

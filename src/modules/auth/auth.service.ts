@@ -3,6 +3,11 @@ import { UsuarioService } from '../usuario/usuario.service';
 import { JwtService } from '@nestjs/jwt';
 import { UsuarioApp } from '../usuario/usuario.entity';
 
+export type AuthenticatedUser = Omit<
+  UsuarioApp,
+  'password' | 'hashPassword' | 'validatePassword'
+>;
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -10,7 +15,10 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async validateUser(email: string, pass: string): Promise<any> {
+  async validateUser(
+    email: string,
+    pass: string,
+  ): Promise<AuthenticatedUser | null> {
     const user = await this.usuarioService.findOneByEmail(email);
     if (user && (await user.validatePassword(pass))) {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -20,7 +28,7 @@ export class AuthService {
     return null;
   }
 
-  login(user: Omit<UsuarioApp, 'password'>) {
+  login(user: AuthenticatedUser) {
     const payload = {
       email_login: user.email_login,
       sub: user.id_usuario,

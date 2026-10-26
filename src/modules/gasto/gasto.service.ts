@@ -22,7 +22,11 @@ export class GastoService {
     return this.gastoRepository.save(newGasto);
   }
 
-  async generarMes(mes: number, anio: number, userId: string): Promise<Gasto[]> {
+  async generarMes(
+    mes: number,
+    anio: number,
+    userId: string,
+  ): Promise<Gasto[]> {
     // 1. Calcular mes y año anterior
     let mesAnterior = mes - 1;
     let anioAnterior = anio;
