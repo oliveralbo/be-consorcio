@@ -1,78 +1,109 @@
-# API Endpoints
+# API
 
-## Health Check
-| Método | Ruta | Auth | Roles |
-|---|---|---|---|
-| GET | `/` | No | - |
+Base: `http://localhost:3001` en desarrollo. Todas las respuestas son JSON.
+
+Roles: `ADMIN` = `administrador`, `TESORERO` = `tesorero`, `VECINO` = `vecino`.
+Todas las rutas protegidas esperan `Authorization: Bearer <token>`. Sin token:
+401. Con token y rol insuficiente: 403.
+
+## Health
+
+| Método | Ruta | Auth |
+| --- | --- | --- |
+| GET | `/` | No |
+
+Devuelve `API CONSORCIO - NESTJS 11`.
 
 ## Auth
-| Método | Ruta | Auth | Roles |
-|---|---|---|---|
-| POST | `/auth/login` | LocalAuthGuard | - |
 
-**Login Response:**
+| Método | Ruta | Guard | Body |
+| --- | --- | --- | --- |
+| POST | `/auth/login` | `LocalAuthGuard` | `{ email, contrasenia }` |
+
+Respuesta:
+
 ```json
 {
   "access_token": "jwt...",
-  "user": { "id", "id_persona", "nombre", "email", "rol" }
+  "user": {
+    "id": "uuid",
+    "id_persona": "uuid",
+    "nombre": "Nombre Apellido",
+    "email": "usuario@ejemplo.com",
+    "rol": "vecino"
+  }
 }
 ```
 
 ## Personas (`/personas`)
-| Método | Ruta | Auth | Roles | DTO |
-|---|---|---|---|---|
-| POST | `/personas/create` | JWT + Roles | ADMIN | CreatePersonaDto |
-| GET | `/personas` | JWT + Roles | ADMIN, TESORERO, VECINO | - |
-| GET | `/personas/:id` | JWT + Roles | ADMIN, TESORERO, VECINO | - |
-| PATCH | `/personas/:id` | JWT + Roles | ADMIN | UpdatePersonaDto |
-| DELETE | `/personas/:id` | JWT + Roles | ADMIN | - (204) |
+
+| Método | Ruta | Roles | DTO |
+| --- | --- | --- | --- |
+| POST | `/personas/create` | ADMIN | `CreatePersonaDto` |
+| GET | `/personas` | ADMIN, TESORERO, VECINO | — |
+| GET | `/personas/:id` | ADMIN, TESORERO, VECINO | — |
+| PATCH | `/personas/:id` | ADMIN | `UpdatePersonaDto` |
+| DELETE | `/personas/:id` | ADMIN | — (204) |
 
 ## Usuarios (`/usuarios`)
-| Método | Ruta | Auth | Roles | DTO |
-|---|---|---|---|---|
-| POST | `/usuarios/create` | JWT + Roles | ADMIN | CreateUsuarioAppDto |
-| GET | `/usuarios` | JWT + Roles | ADMIN | - |
-| GET | `/usuarios/:id` | JWT + Roles | ADMIN | - |
-| PATCH | `/usuarios/:id` | JWT + Roles | ADMIN | UpdateUsuarioAppDto |
-| DELETE | `/usuarios/:id` | JWT + Roles | ADMIN | - (204) |
 
-## Unidades Funcionales (`/unidades-funcionales`)
-| Método | Ruta | Auth | Roles | DTO |
-|---|---|---|---|---|
-| POST | `/unidades-funcionales` | JWT + Roles | ADMIN | CreateUnidadFuncionalDto |
-| GET | `/unidades-funcionales` | JWT + Roles | ADMIN, TESORERO, VECINO | - |
-| GET | `/unidades-funcionales/:id` | JWT + Roles | ADMIN, TESORERO, VECINO | - |
-| PATCH | `/unidades-funcionales/:id` | JWT + Roles | ADMIN | UpdateUnidadFuncionalDto |
-| DELETE | `/unidades-funcionales/:id` | JWT + Roles | ADMIN | - (204) |
+| Método | Ruta | Roles | DTO |
+| --- | --- | --- | --- |
+| POST | `/usuarios/create` | ADMIN | `CreateUsuarioAppDto` |
+| GET | `/usuarios` | ADMIN | — |
+| GET | `/usuarios/:id` | ADMIN | — |
+| PATCH | `/usuarios/:id` | ADMIN | `UpdateUsuarioAppDto` |
+| DELETE | `/usuarios/:id` | ADMIN | — (204) |
+
+## Unidades funcionales (`/unidades-funcionales`)
+
+| Método | Ruta | Roles | DTO |
+| --- | --- | --- | --- |
+| POST | `/unidades-funcionales` | ADMIN | `CreateUnidadFuncionalDto` |
+| GET | `/unidades-funcionales` | ADMIN, TESORERO, VECINO | — |
+| GET | `/unidades-funcionales/:id` | ADMIN, TESORERO, VECINO | — |
+| PATCH | `/unidades-funcionales/:id` | ADMIN | `UpdateUnidadFuncionalDto` |
+| DELETE | `/unidades-funcionales/:id` | ADMIN | — (204) |
 
 ## Expensas (`/expensa`)
-| Método | Ruta | Auth | Roles | DTO |
-|---|---|---|---|---|
-| POST | `/expensa/create` | JWT + Roles | ADMIN, TESORERO | CreateExpensaDto |
-| POST | `/expensa/generar-mes` | JWT + Roles | ADMIN, TESORERO | GenerarExpensasDto |
-| GET | `/expensa` | JWT + Roles | ADMIN, TESORERO, VECINO | - |
-| GET | `/expensa/:id` | JWT + Roles | ADMIN, TESORERO, VECINO | - |
-| PATCH | `/expensa/:id` | JWT + Roles | ADMIN, TESORERO | UpdateExpensaDto |
-| DELETE | `/expensa/:id` | JWT + Roles | ADMIN, TESORERO | - (204) |
+
+| Método | Ruta | Roles | DTO |
+| --- | --- | --- | --- |
+| POST | `/expensa/create` | ADMIN, TESORERO | `CreateExpensaDto` |
+| POST | `/expensa/generar-mes` | ADMIN, TESORERO | `GenerarExpensasDto` |
+| GET | `/expensa` | ADMIN, TESORERO, VECINO | — |
+| GET | `/expensa/:id` | ADMIN, TESORERO, VECINO | — |
+| PATCH | `/expensa/:id` | ADMIN, TESORERO | `UpdateExpensaDto` |
+| DELETE | `/expensa/:id` | ADMIN, TESORERO | — (204) |
 
 ## Gastos (`/gasto`)
-| Método | Ruta | Auth | Roles | DTO |
-|---|---|---|---|---|
-| POST | `/gasto/create` | JWT + Roles | ADMIN, TESORERO | CreateGastoDto |
-| POST | `/gasto/generar-mes` | JWT + Roles | ADMIN, TESORERO | GenerarMesGastoDto |
-| GET | `/gasto` | JWT + Roles | ADMIN, TESORERO, VECINO | - |
-| GET | `/gasto/:id` | JWT + Roles | ADMIN, TESORERO, VECINO | - |
-| PATCH | `/gasto/:id` | JWT + Roles | ADMIN, TESORERO | UpdateGastoDto |
-| DELETE | `/gasto/:id` | JWT + Roles | ADMIN, TESORERO | - (204) |
+
+| Método | Ruta | Roles | DTO |
+| --- | --- | --- | --- |
+| POST | `/gasto/create` | ADMIN, TESORERO | `CreateGastoDto` |
+| POST | `/gasto/generar-mes` | ADMIN, TESORERO | `GenerarMesGastoDto` |
+| GET | `/gasto` | ADMIN, TESORERO, VECINO | — |
+| GET | `/gasto/:id` | ADMIN, TESORERO, VECINO | — |
+| PATCH | `/gasto/:id` | ADMIN, TESORERO | `UpdateGastoDto` |
+| DELETE | `/gasto/:id` | ADMIN, TESORERO | — (204) |
 
 ## Dashboard (`/dashboard`)
-| Método | Ruta | Auth | Roles | Descripción |
-|---|---|---|---|---|
-| GET | `/dashboard/balance` | JWT + Roles | ADMIN, TESORERO, VECINO | Balance (ingresos - egresos) |
 
-## Resumen de Roles por Endpoint
-| Rol | Acceso |
-|---|---|
+| Método | Ruta | Roles | Descripción |
+| --- | --- | --- | --- |
+| GET | `/dashboard/balance` | ADMIN, TESORERO, VECINO | Ingresos, egresos y balance |
+
+## Matriz de acceso
+
+| Rol | Permisos |
+| --- | --- |
 | ADMIN | Todo |
-| TESORERO | Todo excepto CRUD de personas, usuarios y unidades (solo lectura) |
+| TESORERO | Lectura general; crear/editar/borrar expensas y gastos |
 | VECINO | Solo lectura en personas, unidades, expensas, gastos y dashboard |
+
+## Notas
+
+- Los listados devuelven **todas** las filas: no hay paginación (ver
+  `RISKS.md`).
+- Los DELETE son soft delete: la fila queda con `deleted_at`.
+- El detalle de reglas por endpoint está en `DOMAIN.md` y `AUTH.md`.

@@ -112,7 +112,8 @@ npm run lint
 
 Endpoint público: `GET /` → `"API CONSORCIO - NESTJS 11"`
 
-Documentación de endpoints en `.agents/context/04-api-endpoints.md`.
+Documentación de endpoints en `.agents/docs/API.md`. El índice del harness de
+IA está en `AGENTS.md`.
 
 ---
 
@@ -131,5 +132,5 @@ src/
 │   ├── gasto/                 # Gastos + generación mensual
 │   └── dashboard/             # Balance financiero
 ├── migrations/                # Migraciones TypeORM
-└── seeds/                     # Seeders (admin-user)
+└── seeds/                     # Seeders (admin, datos demo)
 ```

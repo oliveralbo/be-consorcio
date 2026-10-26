@@ -1,61 +1,69 @@
-# Auth System & Guards
+# Autenticación y guards
 
-## Flujo de Autenticación
+## Login (`POST /auth/login`)
 
-### Login (POST /auth/login)
-1. `LocalAuthGuard` activa `LocalStrategy`
+1. `LocalAuthGuard` activa `LocalStrategy`.
 2. `LocalStrategy` extrae `email` y `contrasenia` del body
-3. Llama a `AuthService.validateUser(email, contrasenia)`
-4. `validateUser` busca usuario por email en `UsuarioService.findOneByEmail()`
-5. Compara password con bcrypt mediante `usuario.validatePassword()`
-6. Si OK, retorna usuario; si no, lanza `UnauthorizedException`
-7. `AuthController.login()` genera JWT vía `AuthService.login(user)`
-8. Retorna `{ access_token, user: { id, id_persona, nombre, email, rol } }`
+   (`usernameField: 'email'`, `passwordField: 'contrasenia'`).
+3. Llama a `AuthService.validateUser(email, contrasenia)`.
+4. `validateUser` busca el usuario con `UsuarioService.findOneByEmail()`.
+5. Compara con bcrypt vía `usuario.validatePassword()`.
+6. Si falla: `UnauthorizedException('Credenciales incorrectas')`.
+7. `AuthController.login()` arma el JWT con `AuthService.login(user)`.
+8. Devuelve `{ access_token, user: { id, id_persona, nombre, email, rol } }`.
 
-### JWT Token
-- **Payload:** `{ email_login, sub: id_usuario, rol }`
-- **Secreto:** `constants.ts` + `process.env.JWT_SECRET`
-- **Expiración:** 3600s (1 hora)
-- **Header:** `Authorization: Bearer <token>`
+## JWT
+
+- **Payload**: `{ email_login, sub: id_usuario, rol }`.
+- **Secreto**: `JWT_SECRET`, resuelto con `ConfigService.getOrThrow()`.
+  - `AuthModule` usa `JwtModule.registerAsync`.
+  - `JwtStrategy` lo inyecta por constructor.
+  - Ya **no** existe `src/modules/auth/constants.ts` ni un secreto hardcodeado
+    de fallback. Si falta `JWT_SECRET`, la app no arranca.
+- **Expiración**: `3600s` (1 hora), configurada en `JwtModule.registerAsync`.
+- **Header**: `Authorization: Bearer <token>`.
+- Sin refresh token ni logout del lado del servidor.
 
 ## Guards
 
-### JwtAuthGuard
-- Extiende `AuthGuard('jwt')`
-- Se aplica a rutas protegidas
-- `JwtStrategy` valida el token y retorna `{ id_usuario, email_login, rol }`
+| Guard | Archivo | Qué hace |
+| --- | --- | --- |
+| `JwtAuthGuard` | `guards/jwt-auth.guard.ts` | `AuthGuard('jwt')`. Valida el token. |
+| `LocalAuthGuard` | `guards/local-auth.guard.ts` | `AuthGuard('local')`. Solo en `/auth/login`. |
+| `RolesGuard` | `guards/roles.guard.ts` | Compara `request.user.rol` con `@Roles()`. |
 
-### LocalAuthGuard
-- Extiende `AuthGuard('local')`
-- Se aplica solo a `POST /auth/login`
-- Extrae `email` como usernameField y `contrasenia` como passwordField
+`RolesGuard` usa `Reflector.getAllAndOverride(ROLES_KEY, [handler, class])`:
 
-### RolesGuard
-- Verifica el decorador `@Roles()` en el handler
-- Compara con `request.user.rol`
-- Implementación: `const requiredRoles = this.reflector.getAllAndOverride<RolUsuario[]>('roles', ...)`
-- Si `requiredRoles` no existe o está vacío, permite el acceso
-- Caso contrario, verifica que `requiredRoles.includes(user.rol)`
+- Sin `@Roles()`: permite el acceso.
+- Con `@Roles(...)`: exige que el rol del usuario esté en la lista. Si no,
+  devuelve `false` → 403.
 
-## Decoradores
+## Decorador `@Roles`
 
-### @Roles(...roles: RolUsuario[])
-- Establece metadatos `roles` en el handler
-- Uso: `@Roles(RolUsuario.ADMIN)` o `@Roles(RolUsuario.ADMIN, RolUsuario.TESORERO)`
-- Se aplica por endpoint en el controlador
+```ts
+@Roles(RolUsuario.ADMIN, RolUsuario.TESORERO)
+```
 
-## Estrategias Passport
+Setea el metadato `roles` en el handler. Se usa siempre junto a
+`@UseGuards(JwtAuthGuard, RolesGuard)`.
 
-### LocalStrategy
-- `usernameField: 'email'`
-- `passwordField: 'contrasenia'`
-- `validate(email, contrasenia)` -> `AuthService.validateUser()`
+## Estrategias
 
-### JwtStrategy
-- Extrae token de `Authorization: Bearer`
-- `validate(payload)` -> `{ id_usuario: payload.sub, email_login: payload.email_login, rol: payload.rol }`
+- `LocalStrategy.validate(email, contrasenia)` → `AuthService.validateUser()`.
+- `JwtStrategy.validate(payload: JwtPayload)` → `{ id_usuario, email_login, rol }`,
+  que queda como `request.user`.
 
-## Modelo de Usuario (UsuarioApp)
-- `@BeforeInsert()` hashea password con bcrypt (10 rounds)
-- `validatePassword(password)`: bcrypt.compare()
-- Campo `rol` con enum `RolUsuario`
+`JwtPayload` y `RequestWithUser` son interfaces locales: no usar `any` para
+tipar el request.
+
+## Modelo de usuario
+
+- Password hasheado con bcrypt (10 rounds) en `@BeforeInsert`.
+- `validatePassword(password)` usa `bcrypt.compare`.
+- `rol` es `RolUsuario`: `tesorero` | `vecino` | `administrador`.
+
+## Deuda conocida
+
+- Sin rate limiting en el login (no está `@nestjs/throttler`).
+- Token de 1 hora sin renovación; no hay endpoint de refresh.
+- Ver `RISKS.md` para el detalle y el resto.

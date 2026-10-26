@@ -1,93 +1,114 @@
-# Database & Infrastructure
+# Infraestructura
 
-## Configuración de Base de Datos
+## Base de datos
 
-**Archivo:** `src/config/data-source.ts`
+`src/config/data-source.ts` (usado por la app y por el CLI):
 
-```typescript
-export const dataSourceOptions: DataSourceOptions = {
+```ts
+{
   type: 'postgres',
-  host: process.env.DB_HOST!,
-  port: parseInt(process.env.DB_PORT!, 10),
-  username: process.env.DB_USERNAME!,
-  password: process.env.DB_PASSWORD!,
-  database: process.env.DB_DATABASE!,
+  host, port, username, password, database,   // desde .env
   entities: [__dirname + '/../modules/**/*.entity{.ts,.js}'],
   migrations: [__dirname + '/../migrations/*{.ts,.js}'],
   synchronize: false,
-};
+}
 ```
 
-**Nota:** `synchronize: false` — todos los cambios de esquema se hacen mediante migraciones.
+- Valida que estén `DB_HOST`, `DB_PORT`, `DB_USERNAME`, `DB_PASSWORD` y
+  `DB_DATABASE`.
+- `JWT_SECRET` no está en esa lista, pero la app lo exige vía
+  `ConfigService.getOrThrow()`: sin él, el arranque falla.
 
-## Variables de Entorno (`.env`)
+## Variables de entorno
 
-| Variable | Dev | Docker | Descripción |
-|---|---|---|---|
-| DB_HOST | localhost | db | Host PostgreSQL |
-| DB_PORT | 5433 | 5432 | Puerto PostgreSQL |
-| DB_USERNAME | consorcio_user | consorcio_user | Usuario DB |
-| DB_PASSWORD | 1234 | 1234 | Password DB |
-| DB_DATABASE | consorcio_db | consorcio_db | Nombre DB |
-| JWT_SECRET | SECRET_KEY_PARA_PRODUCCION | SECRET_KEY_PARA_PRODUCCION | Secreto JWT |
-| PORT | 3001 | 3000 | Puerto API |
+El archivo `.env` está gitignoreado. `.env.example` documenta las necesarias.
+
+| Variable | Para qué |
+| --- | --- |
+| `DB_HOST` | Host de PostgreSQL (`localhost` en dev). |
+| `DB_PORT` | Puerto (`5433` en dev, `5432` dentro de Docker). |
+| `DB_USERNAME` / `DB_PASSWORD` | Credenciales de la base. |
+| `DB_DATABASE` | Nombre de la base (`consorcio_db`). |
+| `PORT` | Puerto de la API (default `3001`). |
+| `JWT_SECRET` | Firma de los JWT. Obligatoria. |
+| `TRELLO_API_KEY` / `TRELLO_TOKEN` | Solo para la skill `feature-planner`. No las usa la app. |
+| `TRELLO_BOARD_ID` / `TRELLO_LIST_ID` | Board `consorcio` y lista `backlog`. |
+
+Los valores locales no se copian a documentación ni se imprimen. Los defaults
+de `.env.example` y `docker-compose.yml` son débiles: ver `RISKS.md`.
 
 ## Docker
 
-### docker-compose.yml
-```yaml
-services:
-  db:
-    image: postgres:14
-    ports: ["5433:5432"]
-    volumes: [postgres_data]
-    environment: [POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_DB]
-  app:
-    build: .
-    ports: ["3000:3000"]
-    depends_on: [db]
-    environment: [DB_HOST, DB_USERNAME, DB_PASSWORD, DB_DATABASE, JWT_SECRET]
-```
+`docker-compose.yml` define dos servicios:
 
-### Dockerfile
-- Base: `node:18-alpine`
-- Expone puerto 3000
-- Comando: `npm run start:dev`
-- Workdir: `/app`
+| Servicio | Imagen | Puerto | Notas |
+| --- | --- | --- | --- |
+| `db` | `postgres:14` | `5433:5432` | Contenedor `consorcio-db`, volumen `postgres_data`. |
+| `app` | build local | `3000:3000` | Contenedor `consorcio-app`, depende de `db`. |
 
-## Comandos Útiles
+- El `Dockerfile` usa `node:18-alpine` y corre `npm run start:dev` (modo
+  desarrollo, no build de producción). Deuda: ver `RISKS.md`.
+- En Docker, `DB_HOST=db` y `DB_PORT=5432`.
+- La app en Docker no tiene healthcheck.
+
+## Migraciones
+
+Están en `src/migrations/`, todas aplicadas. Orden cronológico:
+
+| # | Migración | Cambio |
+| --- | --- | --- |
+| 1 | `InitialSchema` | Tablas iniciales. |
+| 2 | `RemoveEmailAndTelefonoFromPersona` | Quita email y teléfono de persona. |
+| 3 | `AddPisoRemoveCoeficienteUnidadFuncional` | Agrega piso, quita coeficiente. |
+| 4 | `AddTelefonoToPersonaAndPopulate` | Re-agrega teléfono con datos. |
+| 5 | `AddDescripcionToGastoAndExpensa` | Agrega descripción. |
+| 6 | `RemoveCierreMensualTable` | Elimina `cierre_mensual`. |
+| 7 | `MakePersonaMandatoryInUsuario` | `id_persona` NOT NULL + CASCADE. |
+| 8 | `UpdateExpensaAndUnidadFuncional` | Pagos: `monto_pagado`, `estado`, vencimiento. |
+| 9 | `AddTipoToGasto` | Agrega `tipo` (mensual/extraordinario). |
+
+El CLI compila a `dist/`, así que **siempre** `npm run build` antes de
+`migration:generate` o `migration:run`. Procedimiento completo en
+`.agents/rules/typeorm.md`.
+
+## Comandos
 
 ```bash
-# Desarrollo
-npm run start:dev          # Iniciar con watch mode
+npm run start:dev          # desarrollo con watch (3001)
+npm run build              # compila a dist/
+npm run lint               # ESLint --fix
+npx eslint "{src,test}/**/*.ts"   # solo verificar
 
-# Base de datos
-npm run migration:run      # Ejecutar migraciones pendientes
-npm run migration:generate -- src/migrations/NombreMigration  # Generar migración
-npm run migration:revert   # Revertir última migración
-npm run db:drop            # Dropear todas las tablas
+npm test                   # unitarios (Jest)
+npm run test:e2e           # e2e (Supertest)
 
-# Seeders
-npm run seed:admin         # Crear usuario administrador
+npm run migration:generate -- src/migrations/Nombre
+npm run migration:run
+npm run migration:revert
+npm run db:drop            # borra todas las tablas (requiere confirmación)
 
-# Testing
-npm run test               # Test unitarios
-npm run test:e2e           # Test end-to-end
-
-# Lint
-npm run lint               # ESLint + Prettier fix
+npm run seed:admin
+npm run seed:load
 ```
 
-## Migraciones (orden cronológico)
+## Tests
 
-| # | Migración | Cambios |
-|---|---|---|
-| 1 | InitialSchema | Creación de tablas iniciales |
-| 2 | RemoveEmailAndTelefonoFromPersona | Drop email y telefono de persona |
-| 3 | AddPisoRemoveCoeficienteUnidadFuncional | Add piso, remove coeficiente |
-| 4 | AddTelefonoToPersonaAndPopulate | Re-add telefono con datos |
-| 5 | AddDescripcionToGastoAndExpensa | Add columna descripcion |
-| 6 | RemoveCierreMensualTable | Drop tabla cierre_mensual |
-| 7 | MakePersonaMandatoryInUsuario | id_persona NOT NULL + CASCADE |
-| 8 | UpdateExpensaAndUnidadFuncional | Sistema de pagos: monto_pagado, estado, fecha_vencimiento |
-| 9 | AddTipoToGasto | Add columna tipo (mensual/extraordinario) |
+- 2 suites: `src/app.controller.spec.ts` (unitario del banner) y
+  `test/app.e2e-spec.ts` (GET `/` con `app.close()` en `afterAll`).
+- No hay tests de auth, expensas, gastos ni dashboard. Ver `RISKS.md`.
+
+## Dependencias y seguridad
+
+- Nest 11.2.x, TypeORM 0.3.27, Jest 30, TypeScript 5.9. Resueltas por
+  `package-lock.json`.
+- `overrides.multer: 2.5.0` corrige la vulnerabilidad de `@nestjs/platform-express`.
+- `npm audit` da 0 vulnerabilidades al momento de documentar.
+- Nest 12 requiere Node 24.15+; el proyecto está en Node 22.17. No actualizar
+  sin plan (ver `RISKS.md`).
+
+## Trello
+
+- Board: <https://trello.com/b/2pwp8i7D/consorcio>
+- Listas: `backlog`, `to do`, `in progress`, `done`.
+- Las credenciales viven en `.env` (gitignoreado) y las usa la skill
+  `feature-planner`.

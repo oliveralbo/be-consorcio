@@ -1,132 +1,118 @@
-# Entities
+# Base de datos
+
+PostgreSQL 14. Esquema manejado **solo** por migraciones TypeORM
+(`synchronize: false`). El historial de migraciones está en `INFRA.md`.
+
+Todas las tablas usan **soft delete** (`deleted_at` con `@DeleteDateColumn()`).
+Las queries normales excluyen las filas borradas.
 
 ## Persona (`persona`)
-Representa una persona física (propietario, inquilino).
 
-| Campo | Tipo | Constraints |
-|---|---|---|
-| id_persona | uuid (PK) | auto-generado |
-| nombre | varchar | NOT NULL |
-| apellido | varchar | NOT NULL |
-| dni | varchar | NOT NULL, UNIQUE |
-| telefono | varchar | NOT NULL |
-| created_at | timestamp | DEFAULT now() |
-| updated_at | timestamp | DEFAULT now() |
-| deleted_at | timestamp | soft delete |
+Persona física: propietario o inquilino.
 
-**Relaciones:**
-- 1:1 con `UsuarioApp` (id_persona -> usuario_app.id_persona, CASCADE)
-- 1:N con `UnidadFuncional` como propietario (id_propietario)
-- 1:N con `UnidadFuncional` como inquilino (id_inquilino, nullable)
-
----
+| Campo | Tipo | Restricciones |
+| --- | --- | --- |
+| `id_persona` | uuid | PK, autogenerado |
+| `nombre` | varchar | NOT NULL |
+| `apellido` | varchar | NOT NULL |
+| `dni` | varchar | NOT NULL, UNIQUE |
+| `telefono` | varchar | NOT NULL |
+| `created_at` | timestamp | default now() |
+| `updated_at` | timestamp | default now() |
+| `deleted_at` | timestamp | soft delete |
 
 ## UsuarioApp (`usuario_app`)
-Usuario del sistema con acceso a la plataforma.
 
-| Campo | Tipo | Constraints |
-|---|---|---|
-| id_usuario | uuid (PK) | auto-generado |
-| email_login | varchar | NOT NULL, UNIQUE |
-| password | varchar | NOT NULL (bcrypt, 10 rounds) |
-| rol | enum (RolUsuario) | DEFAULT 'vecino' |
-| id_persona | uuid (FK) | NOT NULL, UNIQUE, CASCADE |
-| created_at | timestamp | DEFAULT now() |
-| updated_at | timestamp | DEFAULT now() |
-| deleted_at | timestamp | soft delete |
+Usuario con acceso al sistema.
 
-**RolUsuario:** `tesorero` | `vecino` | `administrador`
+| Campo | Tipo | Restricciones |
+| --- | --- | --- |
+| `id_usuario` | uuid | PK, autogenerado |
+| `email_login` | varchar | NOT NULL, UNIQUE |
+| `password` | varchar | NOT NULL, bcrypt (10 rounds, en `@BeforeInsert`) |
+| `rol` | enum `RolUsuario` | default `vecino` |
+| `id_persona` | uuid | FK → `persona`, NOT NULL, UNIQUE, ON DELETE CASCADE |
+| `created_at` / `updated_at` | timestamp | default now() |
+| `deleted_at` | timestamp | soft delete |
 
-**Relaciones:**
-- 1:1 con `Persona` (JoinColumn id_persona)
-- 1:N con `Gasto` (gasto.registrado_por -> id_usuario)
+`RolUsuario`: `tesorero` | `vecino` | `administrador`.
 
----
+Relación 1:1 con `Persona`.
 
 ## UnidadFuncional (`unidad_funcional`)
-Departamento, local o unidad dentro del consorcio.
 
-| Campo | Tipo | Constraints |
-|---|---|---|
-| id_unidad | uuid (PK) | auto-generado |
-| numero | varchar | NOT NULL |
-| superficie | decimal(10,2) | nullable |
-| ambientes | integer | NOT NULL |
-| piso | varchar | DEFAULT 'PB' |
-| monto_base | decimal(10,2) | DEFAULT 0 |
-| id_propietario | uuid (FK) | NOT NULL -> persona |
-| id_inquilino | uuid (FK) | nullable -> persona |
-| created_at | timestamp | DEFAULT now() |
-| updated_at | timestamp | DEFAULT now() |
-| deleted_at | timestamp | soft delete |
+Departamento, local o unidad del consorcio.
 
-**Relaciones:**
-- N:1 con `Persona` como propietario
-- N:1 con `Persona` como inquilino (nullable)
-- 1:N con `Expensa` (expensa.id_unidad -> id_unidad)
+| Campo | Tipo | Restricciones |
+| --- | --- | --- |
+| `id_unidad` | uuid | PK, autogenerado |
+| `numero` | varchar | NOT NULL |
+| `superficie` | decimal(10,2) | nullable |
+| `ambientes` | integer | NOT NULL |
+| `piso` | varchar | default `'PB'` |
+| `monto_base` | decimal(10,2) | default `0` |
+| `id_propietario` | uuid | FK → `persona`, NOT NULL |
+| `id_inquilino` | uuid | FK → `persona`, nullable |
+| `created_at` / `updated_at` | timestamp | default now() |
+| `deleted_at` | timestamp | soft delete |
 
----
+Relaciones N:1 con `Persona` como propietario y como inquilino.
 
 ## Expensa (`expensa`)
-Expensa mensual generada para una unidad funcional.
 
-| Campo | Tipo | Constraints |
-|---|---|---|
-| id_expensa | uuid (PK) | auto-generado |
-| id_unidad | uuid (FK) | -> unidad_funcional |
-| mes | integer | NOT NULL (1-12) |
-| anio | integer | NOT NULL |
-| tipo | enum (TipoExpensa) | DEFAULT 'ordinaria' |
-| descripcion | text | nullable |
-| monto | decimal(10,2) | NOT NULL |
-| monto_pagado | decimal(10,2) | DEFAULT 0 |
-| estado | enum (EstadoExpensa) | DEFAULT 'pendiente' |
-| fecha_vencimiento | date | nullable |
-| fecha_pago | date | nullable |
-| created_at | timestamp | DEFAULT now() |
-| updated_at | timestamp | DEFAULT now() |
-| deleted_at | timestamp | soft delete |
+Expensa mensual de una unidad funcional.
 
-**TipoExpensa:** `ordinaria` | `extraordinaria`
-**EstadoExpensa:** `pendiente` | `parcial` | `pagado`
+| Campo | Tipo | Restricciones |
+| --- | --- | --- |
+| `id_expensa` | uuid | PK, autogenerado |
+| `id_unidad` | uuid | FK → `unidad_funcional`, NOT NULL |
+| `mes` | integer | NOT NULL (1–12) |
+| `anio` | integer | NOT NULL |
+| `tipo` | enum `TipoExpensa` | default `ordinaria` |
+| `descripcion` | text | nullable |
+| `monto` | decimal(10,2) | NOT NULL |
+| `monto_pagado` | decimal(10,2) | default `0` |
+| `estado` | enum `EstadoExpensa` | default `pendiente` |
+| `fecha_vencimiento` | date | nullable |
+| `fecha_pago` | date | nullable |
+| `created_at` / `updated_at` | timestamp | default now() |
+| `deleted_at` | timestamp | soft delete |
 
-**Relaciones:**
-- N:1 con `UnidadFuncional`
-
----
+`TipoExpensa`: `ordinaria` | `extraordinaria`.
+`EstadoExpensa`: `pendiente` | `parcial` | `pagado`.
 
 ## Gasto (`gasto`)
-Gasto registrado del consorcio (servicios, reparaciones, etc.).
 
-| Campo | Tipo | Constraints |
-|---|---|---|
-| id_gasto | uuid (PK) | auto-generado |
-| concepto | varchar | NOT NULL |
-| descripcion | text | nullable |
-| monto | decimal(10,2) | NOT NULL |
-| fecha | date | NOT NULL |
-| medio | varchar | NOT NULL |
-| registrado_por | uuid (FK) | -> usuario_app |
-| tipo | enum (TipoGasto) | DEFAULT 'mensual' |
-| created_at | timestamp | DEFAULT now() |
-| updated_at | timestamp | DEFAULT now() |
-| deleted_at | timestamp | soft delete |
+Gasto del consorcio (servicios, reparaciones, etc.).
 
-**TipoGasto:** `mensual` | `extraordinario`
+| Campo | Tipo | Restricciones |
+| --- | --- | --- |
+| `id_gasto` | uuid | PK, autogenerado |
+| `concepto` | varchar | NOT NULL |
+| `descripcion` | text | nullable |
+| `monto` | decimal(10,2) | NOT NULL |
+| `fecha` | date | NOT NULL |
+| `medio` | varchar | NOT NULL |
+| `registrado_por` | uuid | FK → `usuario_app`, NOT NULL |
+| `tipo` | enum `TipoGasto` | default `mensual` |
+| `created_at` / `updated_at` | timestamp | default now() |
+| `deleted_at` | timestamp | soft delete |
 
-**Relaciones:**
-- N:1 con `UsuarioApp`
+`TipoGasto`: `mensual` | `extraordinario`.
 
----
-
-## Diagrama de Relaciones
+## Diagrama
 
 ```
 Persona (1) ── (1) UsuarioApp        [id_persona FK, CASCADE]
-Persona (1) ── (N) UnidadFuncional   [como propietario]
-Persona (1) ── (N) UnidadFuncional   [como inquilino, nullable]
+Persona (1) ── (N) UnidadFuncional   [propietario]
+Persona (1) ── (N) UnidadFuncional   [inquilino, nullable]
 UnidadFuncional (1) ── (N) Expensa   [id_unidad FK]
 UsuarioApp (1) ── (N) Gasto          [registrado_por FK]
 ```
 
-Todas las tablas implementan **soft delete** (columna `deleted_at`).
+## Tipos en runtime
+
+- Las columnas `decimal` vuelven como **string** desde node-postgres, aunque las
+  entidades las tipen como `number`.
+- Las columnas `date` vuelven como string `YYYY-MM-DD`.
+- Implicancias y deuda: `.agents/rules/typeorm.md` y `RISKS.md`.
