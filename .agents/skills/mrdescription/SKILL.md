@@ -24,5 +24,6 @@ Reglas:
 - Si cambia un endpoint, indicar método, ruta y roles.
 - Sé conciso; no repitas información obvia.
 
-La salida va **siempre** dentro de un bloque de código markdown listo para
-copiar y pegar en GitHub (título, secciones, listas y negritas).
+La salida va **siempre** como markdown formateado directamente en la respuesta,
+**sin** envolverlo en un bloque de código, listo para copiar y pegar en GitHub
+(título, secciones, listas y negritas).
