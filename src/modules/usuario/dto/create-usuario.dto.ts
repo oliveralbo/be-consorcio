@@ -1,5 +1,5 @@
-import { IsEmail, IsNotEmpty, IsOptional, IsString, IsEnum, IsUUID } from "class-validator";
-import { RolUsuario } from "../usuario.entity";
+import { IsNotEmpty, IsString, IsEnum, IsUUID } from 'class-validator';
+import { RolUsuario } from '../usuario.entity';
 
 export class CreateUsuarioAppDto {
   @IsString()
