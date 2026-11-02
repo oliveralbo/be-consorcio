@@ -111,6 +111,7 @@ Patrón completo y convenciones: `.agents/rules/estructura.md`.
 | `workflow.md` | Siempre. Proceso de 12 pasos. |
 | `git.md` | Antes de tocar código y antes de cualquier acción de Git. |
 | `no-auto-actions.md` | Siempre. Límites de autonomía. |
+| `repos.md` | Siempre. No se toca el frontend desde este repo. |
 | `entorno.md` | Antes de cualquier operación contra la base. |
 | `estructura.md` | Crear módulos o archivos nuevos. |
 | `nest.md` | Escribir controllers, services, DTOs, guards. |

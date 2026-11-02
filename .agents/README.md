@@ -25,8 +25,9 @@ con la misma base.
 
 1. Leer `AGENTS.md` en la raíz: es el índice y tiene las reglas críticas.
 2. Seguir siempre `.agents/rules/workflow.md`.
-3. Abrir de `.agents/docs/` solo lo que la tarea necesita.
-4. Usar la skill que corresponda al tipo de tarea.
+3. Respetar `.agents/rules/repos.md`: el frontend se toca en su repo, no acá.
+4. Abrir de `.agents/docs/` solo lo que la tarea necesita.
+5. Usar la skill que corresponda al tipo de tarea.
 
 ## Cómo agregar
 
