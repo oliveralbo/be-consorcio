@@ -105,10 +105,12 @@ Husky 9 + lint-staged. `.husky/pre-commit` corre, en orden:
 2. `bash scripts/check-dod.sh`: tipos, lint del diff, secretos y entidades sin
    migración.
 3. `npm test -- --bail --passWithNoTests`: unitarios.
+4. `npm run test:e2e`: e2e. Requiere la DB local levantada
+   (`docker compose up db -d`); si no responde, el commit falla.
 
-`npm install`/`npm ci` activa el hook vía `prepare`. No corre e2e porque necesita
-la DB. Bypass excepcional: `git commit --no-verify`. Si el suite unitario crece,
-mover el paso de tests a un `pre-push`.
+`npm install`/`npm ci` activa el hook vía `prepare`. Bypass excepcional:
+`git commit --no-verify`. Si el hook se vuelve lento, mover unitarios y e2e a un
+`pre-push`.
 
 ## Dependencias y seguridad
 

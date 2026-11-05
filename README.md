@@ -209,7 +209,8 @@ npm run lint
 - No se commitea en `main`. Creá una rama `feat/`, `fix/`, `chore/`, `docs/` o
   `refactor/` antes de tocar código.
 - El hook de pre-commit (`.husky/pre-commit`) corre Prettier y ESLint sobre los
-  archivos staged, el gate `scripts/check-dod.sh` y los tests unitarios. Si
+  archivos staged, el gate `scripts/check-dod.sh`, los tests unitarios y los
+  e2e. El e2e necesita la DB local levantada (`docker compose up db -d`). Si
   falla, el commit no se crea.
 - Bypass excepcional: `git commit --no-verify` (evitalo; el gate deja de correr).
 - El mismo gate se puede correr a mano: `bash scripts/check-dod.sh`.

@@ -24,6 +24,12 @@ Reglas:
 - Si cambia un endpoint, indicar método, ruta y roles.
 - Sé conciso; no repitas información obvia.
 
-La salida va **siempre** como markdown formateado directamente en la respuesta,
-**sin** envolverlo en un bloque de código, listo para copiar y pegar en GitHub
-(título, secciones, listas y negritas).
+## Salida
+
+- Guardá el resultado en un archivo `.md` (por defecto
+  `/tmp/opencode/mr-description.md`, salvo que Oli indique otro nombre).
+- Mostralo también en la respuesta dentro de un bloque `markdown` para que se
+  pueda copiar tal cual en GitHub.
+- El archivo va **fuera del repo**. No lo agregues a Git salvo que se pida.
+- Formato: título, secciones, listas y negritas. Sin preámbulo ni comentarios
+  fuera de la descripción.
