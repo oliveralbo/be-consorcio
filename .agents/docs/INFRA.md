@@ -97,12 +97,28 @@ npm run seed:load
   `test/app.e2e-spec.ts` (GET `/` con `app.close()` en `afterAll`).
 - No hay tests de auth, expensas, gastos ni dashboard. Ver `RISKS.md`.
 
+## Git hooks
+
+Husky 9 + lint-staged. `.husky/pre-commit` corre, en orden:
+
+1. `lint-staged`: Prettier y ESLint `--fix` sobre los `.ts` staged.
+2. `bash scripts/check-dod.sh`: tipos, lint del diff, secretos y entidades sin
+   migración.
+3. `npm test -- --bail --passWithNoTests`: unitarios.
+4. `npm run test:e2e`: e2e. Requiere la DB local levantada
+   (`docker compose up db -d`); si no responde, el commit falla.
+
+`npm install`/`npm ci` activa el hook vía `prepare`. Bypass excepcional:
+`git commit --no-verify`. Si el hook se vuelve lento, mover unitarios y e2e a un
+`pre-push`.
+
 ## Dependencias y seguridad
 
 - Nest 11.2.x, TypeORM 0.3.27, Jest 30, TypeScript 5.9. Resueltas por
   `package-lock.json`.
 - `overrides.multer: 2.5.0` corrige la vulnerabilidad de `@nestjs/platform-express`.
-- `npm audit` da 0 vulnerabilidades al momento de documentar.
+- `npm audit` no reporta high ni critical. Quedan 3 moderadas de producción
+  (`glob`/`minimatch` vía TypeORM 0.3) y moderadas de desarrollo; ver `RISKS.md`.
 - Nest 12 requiere Node 24.15+; el proyecto está en Node 22.17. No actualizar
   sin plan (ver `RISKS.md`).
 

@@ -102,6 +102,12 @@ Gasto del consorcio (servicios, reparaciones, etc.).
 
 ## Diagrama
 
+`db/schema.dbml` es la versión editable del esquema (skill `dbml`); se abre con
+la extensión `dbdiagram.dbdiagram-vscode` para ver el ERD. `db/schema.dbdiagram`
+es el layout exportado desde dbdiagram.io y se actualiza a mano desde la web.
+
+Resumen textual:
+
 ```
 Persona (1) ── (1) UsuarioApp        [id_persona FK, CASCADE]
 Persona (1) ── (N) UnidadFuncional   [propietario]

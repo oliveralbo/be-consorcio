@@ -1,0 +1,10 @@
+{
+  "recommendations": [
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "dbdiagram.dbdiagram-vscode",
+    "cweijan.vscode-postgresql-client2",
+    "ms-azuretools.vscode-containers",
+    "eamodio.gitlens"
+  ]
+}

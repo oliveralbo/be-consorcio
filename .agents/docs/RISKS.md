@@ -114,11 +114,18 @@ reproducido, solo inferido del código.
 - No hay `id_consorcio` en ninguna tabla: el modelo asume un edificio único.
 - Si el producto crece a multi-consorcio, es una migración grande.
 
+### 17. Advisories moderados en `glob`/`minimatch` vía TypeORM
+
+- `npm audit` reporta 3 moderadas de producción: `glob` y `minimatch` como
+  dependencias transitivas de TypeORM 0.3. No hay high ni critical.
+- El fix que propone npm es TypeORM 1.x (major); no se aplica sin plan.
+- **Acción**: reevaluar al actualizar TypeORM o cuando haya parche en 0.3.
+
 ## Resuelto
 
 | Ítem | Estado |
 | --- | --- |
-| Vulnerabilidad de `multer` | `overrides.multer: 2.5.0`, `npm audit` en 0. |
+| Vulnerabilidad de `multer` | `overrides.multer: 2.5.0`; `npm audit` sin high ni critical. |
 | Secreto JWT hardcodeado en `constants.ts` | Eliminado; todo por `ConfigService.getOrThrow`. |
 | Migración huérfana fuera de `src/migrations` | Eliminada. |
 | Lint con 153 errores | 0 errores. |
