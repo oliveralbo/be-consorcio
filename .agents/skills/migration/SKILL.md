@@ -44,3 +44,4 @@ npm run build   # si tocaste código
 - Después de correr: `bash scripts/check-dod.sh`.
 - Actualizá `.agents/docs/INFRA.md` (tabla de migraciones) y `DB.md` si cambió
   el modelo.
+- Corré la skill `dbml` para mantener `db/schema.dbml` sincronizado.

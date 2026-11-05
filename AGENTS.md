@@ -133,6 +133,7 @@ Patrón completo y convenciones: `.agents/rules/estructura.md`.
 | Revisar cambios | `review` | Findings por severidad sobre el diff. |
 | Describir un MR | `mrdescription` | Título y descripción listos para pegar. |
 | Actualizar la documentación | `upgrade` | Sincroniza `.agents/docs/` con el código. |
+| Actualizar el DBML | `dbml` | Sincroniza `db/schema.dbml` con las entidades. |
 | Especificar antes de codear | `feature-planner` | Spec, alcance y tarjeta en Trello. |
 
 ## Documentación

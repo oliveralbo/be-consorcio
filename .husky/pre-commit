@@ -1,0 +1,5 @@
+set -e
+
+npx lint-staged
+bash scripts/check-dod.sh
+npm test -- --bail --passWithNoTests

@@ -12,3 +12,5 @@ npx eslint "{src,test}/**/*.ts"
 - `@typescript-eslint/no-explicit-any` es **error** en este proyecto (ver `no-any.md`).
 - No deshabilitar reglas con `eslint-disable` sin justificar en el mismo renglón.
 - No pelear con Prettier: si el formato queda raro, se cambia el código, no el config.
+- El hook de pre-commit corre Prettier + ESLint sobre los archivos staged
+  (`lint-staged`) y después el gate completo.
