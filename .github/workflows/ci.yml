@@ -1,0 +1,173 @@
+name: CI
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    name: Calidad
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+        env:
+          HUSKY: 0
+
+      - name: Calcular base del PR
+        id: base
+        shell: bash
+        run: |
+          BASE_REF="${{ github.base_ref || 'main' }}"
+          git fetch --no-tags origin "+refs/heads/${BASE_REF}:refs/remotes/origin/${BASE_REF}"
+          BASE_SHA="$(git merge-base HEAD "origin/${BASE_REF}")"
+          echo "sha=${BASE_SHA}" >> "$GITHUB_OUTPUT"
+
+      - name: Gate del repo
+        run: bash scripts/check-dod.sh "${{ steps.base.outputs.sha }}"
+
+      - name: ESLint
+        run: npx eslint "{src,test}/**/*.ts" --max-warnings=0
+
+      - name: Build
+        run: npm run build
+
+      - name: Tests unitarios
+        run: npm test
+
+      - name: Verificar synchronize
+        shell: bash
+        run: |
+          if grep -RIn --include='*.ts' -E 'synchronize[[:space:]]*:[[:space:]]*true' src; then
+            echo "::error::synchronize: true no está permitido"
+            exit 1
+          fi
+
+  database:
+    name: Migraciones y e2e
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres:14
+        env:
+          POSTGRES_USER: consorcio_ci
+          POSTGRES_PASSWORD: consorcio_ci
+          POSTGRES_DB: consorcio_ci
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U consorcio_ci -d consorcio_ci"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DB_HOST: localhost
+      DB_PORT: 5432
+      DB_USERNAME: consorcio_ci
+      DB_PASSWORD: consorcio_ci
+      DB_DATABASE: consorcio_ci
+      JWT_SECRET: ci-only-secret-not-for-production-1234567890
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+        env:
+          HUSKY: 0
+
+      - name: Calcular base del PR
+        id: base
+        shell: bash
+        run: |
+          BASE_REF="${{ github.base_ref || 'main' }}"
+          git fetch --no-tags origin "+refs/heads/${BASE_REF}:refs/remotes/origin/${BASE_REF}"
+          BASE_SHA="$(git merge-base HEAD "origin/${BASE_REF}")"
+          echo "sha=${BASE_SHA}" >> "$GITHUB_OUTPUT"
+
+      - name: Revisar migraciones del PR
+        shell: bash
+        run: |
+          BASE_SHA="${{ steps.base.outputs.sha }}"
+          NEW="$(git diff --name-only --diff-filter=A "$BASE_SHA"...HEAD -- 'src/migrations/*.ts')"
+          MOD="$(git diff --name-only --diff-filter=M "$BASE_SHA"...HEAD -- 'src/migrations/*.ts')"
+
+          {
+            echo "## Migraciones del PR"
+            if [ -z "$NEW" ]; then
+              echo "- Sin migraciones nuevas."
+            else
+              echo "- Nuevas:"
+              printf '%s\n' "$NEW" | sed 's/^/  - /'
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          if [ -n "$MOD" ]; then
+            echo "::error::No se editan migraciones existentes:"
+            printf '%s\n' "$MOD"
+            exit 1
+          fi
+
+          DESTRUCTIVE=0
+          while IFS= read -r file; do
+            [ -z "$file" ] && continue
+            MATCHES="$(awk '/async[[:space:]]+up\(/{in_up=1} /async[[:space:]]+down\(/{in_up=0} in_up' "$file" \
+              | grep -nE 'DROP[[:space:]]+(TABLE|COLUMN)|TRUNCATE|DELETE[[:space:]]+FROM' || true)"
+            if [ -n "$MATCHES" ]; then
+              DESTRUCTIVE=1
+              echo "::warning file=${file}::Operación destructiva en up(); requiere revisión manual"
+              echo "- Advertencia: \`${file}\` tiene operaciones destructivas en \`up()\`." >> "$GITHUB_STEP_SUMMARY"
+              printf '%s\n' "$MATCHES"
+            fi
+          done <<< "$NEW"
+
+          if [ "$DESTRUCTIVE" -eq 1 ]; then
+            echo "::notice::Revisar las operaciones destructivas antes de mergear."
+          fi
+
+      - name: Build
+        run: npm run build
+
+      - name: Aplicar migraciones
+        run: npm run migration:run
+
+      - name: Verificar drift de esquema
+        shell: bash
+        run: |
+          OUTPUT="$(npm run -s typeorm -- schema:log 2>&1 | sed -E 's/\x1b\[[0-9;]*m//g')"
+          printf '%s\n' "$OUTPUT"
+          if ! grep -q "Your schema is up to date" <<< "$OUTPUT"; then
+            echo "::error::El esquema de la DB no coincide con las entidades. Falta una migración o está desactualizada."
+            exit 1
+          fi
+
+      - name: Tests e2e
+        run: npm run test:e2e

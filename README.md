@@ -216,6 +216,8 @@ npm run lint
 - El mismo gate se puede correr a mano: `bash scripts/check-dod.sh`.
 - Todo cambio de esquema va con una migración nueva en `src/migrations/`. No se
   editan migraciones ya aplicadas.
+- Cada PR corre CI con dos checks: **Calidad** y **Migraciones y e2e**. Para
+  mergear, ambos tienen que estar verdes.
 - Detalle de las reglas: `.agents/rules/workflow.md` y `.agents/rules/git.md`.
 
 ---

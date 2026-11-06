@@ -112,6 +112,24 @@ Husky 9 + lint-staged. `.husky/pre-commit` corre, en orden:
 `git commit --no-verify`. Si el hook se vuelve lento, mover unitarios y e2e a un
 `pre-push`.
 
+## CI
+
+`.github/workflows/ci.yml` corre en cada PR y manualmente. Dos jobs:
+
+| Job | Qué valida |
+| --- | --- |
+| **Calidad** | Gate `check-dod.sh`, ESLint con `--max-warnings=0`, build, unitarios y que no aparezca `synchronize: true`. |
+| **Migraciones y e2e** | Migraciones desde cero en Postgres 14, inmutabilidad de migraciones existentes, drift con `schema:log` y e2e. |
+
+- El job de base lista las migraciones nuevas en el resumen del PR.
+- Falla si se modifica una migración que ya existe.
+- Advierte (no bloquea) si una migración nueva tiene `DROP`/`TRUNCATE`/`DELETE`
+  dentro de `up()`; eso requiere revisión humana.
+- No hay filtros de `paths`: si los checks son obligatorios en branch
+  protection, un workflow salteado podría dejar el PR bloqueado.
+- En GitHub, marcar **Calidad** y **Migraciones y e2e** como required status
+  checks de `main`.
+
 ## Dependencias y seguridad
 
 - Nest 11.2.x, TypeORM 0.3.27, Jest 30, TypeScript 5.9. Resueltas por
